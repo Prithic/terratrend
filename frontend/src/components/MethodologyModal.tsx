@@ -1,5 +1,7 @@
-import React from "react";
-import { X, BookOpen, ExternalLink, ShieldCheck } from "lucide-react";
+"use client";
+
+import React, { useEffect } from "react";
+import { X, BookOpen, ShieldCheck } from "lucide-react";
 
 interface MethodologyModalProps {
   isOpen: boolean;
@@ -10,22 +12,42 @@ export const MethodologyModal: React.FC<MethodologyModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  // Listen for Escape key to close modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-[#0b1320] border border-slate-700/80 rounded-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto shadow-2xl p-6 text-slate-200 space-y-6">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="methodology-modal-title"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn"
+    >
+      <div className="bg-obs-surface1 border border-obs-borderSubtle rounded-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto shadow-2xl p-6 text-slate-200 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-center justify-between border-b border-obs-borderSubtle pb-4">
           <div className="flex items-center gap-2.5">
-            <BookOpen className="w-5 h-5 text-cyan-400" />
-            <h2 className="text-lg font-bold text-white tracking-tight">
+            <BookOpen className="w-5 h-5 text-cyan-400 shrink-0" />
+            <h2 id="methodology-modal-title" className="text-lg font-bold text-white tracking-tight">
               TerraTrend Scientific Methodology & Statistical Formulation
             </h2>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+            aria-label="Close Methodology Modal"
+            className="p-1.5 rounded-lg hover:bg-obs-surface2 text-slate-400 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400"
           >
             <X className="w-5 h-5" />
           </button>
@@ -39,7 +61,7 @@ export const MethodologyModal: React.FC<MethodologyModalProps> = ({
           <p className="text-slate-300">
             The Mann-Kendall test (Mann 1945, Kendall 1975) is a rank-based non-parametric statistical test recommended by the World Meteorological Organization (WMO) for detecting monotonic trends in climatological and hydrological series. Unlike Ordinary Least Squares (OLS), it requires no assumption of normal distribution and is robust against non-normality, missing values, and isolated extreme weather outliers.
           </p>
-          <div className="p-3 bg-slate-900/90 rounded-lg border border-slate-800 font-mono text-[11px] text-cyan-300 space-y-1.5">
+          <div className="p-3 bg-obs-canvas rounded-lg border border-obs-borderSubtle font-mono text-[11px] text-cyan-300 space-y-1.5">
             <div>Score S = ∑ (k=1 to n-1) ∑ (j=k+1 to n) sgn(x_j - x_k)</div>
             <div>Var(S) = [ n(n-1)(2n+5) - ∑ t(t-1)(2t+5) ] / 18</div>
             <div>Standardized Z = (S - 1) / √Var(S) if S &gt; 0, or (S + 1) / √Var(S) if S &lt; 0</div>
@@ -58,7 +80,7 @@ export const MethodologyModal: React.FC<MethodologyModalProps> = ({
           <p className="text-slate-300">
             Sen's slope estimator (Sen 1968) calculates the median slope among all pairwise data combinations:
           </p>
-          <div className="p-3 bg-slate-900/90 rounded-lg border border-slate-800 font-mono text-[11px] text-emerald-300">
+          <div className="p-3 bg-obs-canvas rounded-lg border border-obs-borderSubtle font-mono text-[11px] text-emerald-300">
             Q_k = (x_j - x_i) / (j - i) for all 1 ≤ i &lt; j ≤ n; Sen's Slope = median(Q)
           </div>
           <p className="text-slate-400">
@@ -87,7 +109,7 @@ export const MethodologyModal: React.FC<MethodologyModalProps> = ({
         </div>
 
         {/* Section 5: Data Lineage & Citations */}
-        <div className="space-y-3 text-xs leading-relaxed border-t border-slate-800 pt-4">
+        <div className="space-y-3 text-xs leading-relaxed border-t border-obs-borderSubtle pt-4">
           <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider">
             Official NASA Data Attribution & Lineage
           </h3>
@@ -105,10 +127,11 @@ export const MethodologyModal: React.FC<MethodologyModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end pt-2 border-t border-slate-800">
+        <div className="flex justify-end pt-2 border-t border-obs-borderSubtle">
           <button
+            type="button"
             onClick={onClose}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold transition-colors"
+            className="min-h-[38px] px-4 py-2 bg-obs-surface2 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400"
           >
             Close Documentation
           </button>

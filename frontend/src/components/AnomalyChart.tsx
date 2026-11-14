@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   ResponsiveContainer,
@@ -12,6 +14,7 @@ import {
 } from "recharts";
 import { TimeSeriesPoint, VariableMetadata } from "@/types";
 import { BarChart3 } from "lucide-react";
+import { formatAnomaly } from "@/utils/formatters";
 
 interface AnomalyChartProps {
   data: TimeSeriesPoint[];
@@ -29,16 +32,26 @@ export const AnomalyChart: React.FC<AnomalyChartProps> = ({
       const p = payload[0].payload as TimeSeriesPoint;
       const anom = p.baseline_anomaly ?? 0;
       return (
-        <div className="bg-[#0b1320] border border-slate-700/80 p-2.5 rounded-lg shadow-xl text-xs space-y-1">
-          <div className="font-bold text-slate-200">{p.date}</div>
+        <div
+          role="region"
+          aria-label={`Anomaly for ${p.date}`}
+          className="bg-obs-surface2 border border-obs-borderSubtle p-2.5 rounded-lg shadow-xl text-xs space-y-1 min-w-[190px]"
+        >
+          <div className="font-bold text-slate-200 border-b border-obs-borderSubtle pb-1">{p.date}</div>
           <div className="flex justify-between gap-3 text-slate-300">
             <span>Observed:</span>
-            <span className="font-mono font-bold">{p.value} {meta.units}</span>
+            <span className="font-mono font-bold tabular-nums">
+              {p.value !== null && p.value !== undefined ? `${p.value.toFixed(2)} ${meta.units}` : "N/A"}
+            </span>
           </div>
           <div className="flex justify-between gap-3">
             <span>Deviation:</span>
-            <span className={`font-mono font-bold ${anom >= 0 ? "text-red-400" : "text-cyan-400"}`}>
-              {anom >= 0 ? `+${anom}` : anom} {meta.units}
+            <span
+              className={`font-mono font-bold tabular-nums ${
+                anom >= 0 ? "text-red-400" : "text-cyan-400"
+              }`}
+            >
+              {formatAnomaly(anom, meta.units)}
             </span>
           </div>
         </div>
@@ -48,7 +61,10 @@ export const AnomalyChart: React.FC<AnomalyChartProps> = ({
   };
 
   return (
-    <div className="bg-[#0b1320] border border-slate-800/80 rounded-xl p-4 sm:p-5 shadow-sm space-y-3">
+    <section
+      aria-label="Climatological Anomaly Distribution Chart"
+      className="bg-obs-surface1 border border-obs-borderSubtle rounded-2xl p-4 sm:p-5 shadow-sm space-y-3"
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <BarChart3 className="w-4 h-4 text-cyan-400" />
@@ -56,12 +72,35 @@ export const AnomalyChart: React.FC<AnomalyChartProps> = ({
             Climatological Anomaly Distribution
           </h3>
         </div>
-        <span className="text-[11px] text-slate-400 font-mono">
-          Baseline Mean: {baselineMean} {meta.units}
+        <span className="text-[11px] text-slate-400 font-mono tabular-nums">
+          Baseline Mean: {baselineMean.toFixed(2)} {meta.units}
         </span>
       </div>
 
-      <div className="h-[200px] w-full">
+      {/* Screen reader summary */}
+      <div className="sr-only">
+        <table>
+          <caption>Anomalies relative to baseline climatology ({baselineMean.toFixed(2)} {meta.units})</caption>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Observed</th>
+              <th>Anomaly</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((entry) => (
+              <tr key={entry.date}>
+                <td>{entry.date}</td>
+                <td>{entry.value}</td>
+                <td>{entry.baseline_anomaly ?? "N/A"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="h-[200px] w-full" aria-hidden="true">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
@@ -93,6 +132,6 @@ export const AnomalyChart: React.FC<AnomalyChartProps> = ({
           </BarChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </section>
   );
 };

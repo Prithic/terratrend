@@ -5,8 +5,8 @@
 @import 'leaflet/dist/leaflet.css';
 
 :root {
-  --background: #030712;
-  --foreground: #f8fafc;
+  --background: #040810;
+  --foreground: #f1f5f9;
 }
 
 body {
@@ -14,6 +14,21 @@ body {
   color: var(--foreground);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   overflow-x: hidden;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Tabular Numerals for Scientific Precision */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* WCAG 2.2 AA Focus Visibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
 }
 
 /* Custom scrollbars */
@@ -22,17 +37,18 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b1320;
+  background: #09111e;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #1e3352;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #334e77;
 }
 
+/* Leaflet Container Dark Inversion */
 .leaflet-container {
-  background: #0b1320 !important;
+  background: #09111e !important;
   font-family: inherit;
 }

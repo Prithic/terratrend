@@ -1,9 +1,10 @@
+"use client";
+
 import React, { useState } from "react";
 import {
   ResponsiveContainer,
   ComposedChart,
   Line,
-  Scatter,
   XAxis,
   YAxis,
   Tooltip,
@@ -13,6 +14,7 @@ import {
 } from "recharts";
 import { TimeSeriesPoint, VariableMetadata, TrendStatistics } from "@/types";
 import { TrendingUp, Layers } from "lucide-react";
+import { formatSlope, formatAnomaly } from "@/utils/formatters";
 
 interface TimeSeriesChartProps {
   data: TimeSeriesPoint[];
@@ -34,45 +36,53 @@ export const TimeSeriesChart: React.FC<TimeSeriesChartProps> = ({
 
   const baselineMean = stats.diagnostics.baseline_mean;
 
-  // Custom Tooltip
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  // Custom Accessible Tooltip
+  const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const pData = payload[0].payload as TimeSeriesPoint;
       return (
-        <div className="bg-[#0b1320] border border-slate-700/80 p-3 rounded-lg shadow-xl text-xs space-y-1.5 min-w-[200px]">
-          <div className="font-bold text-slate-200 border-b border-slate-800 pb-1">
+        <div
+          role="region"
+          aria-label={`Observations for ${pData.date}`}
+          className="bg-obs-surface2 border border-obs-borderSubtle p-3 rounded-lg shadow-2xl text-xs space-y-1.5 min-w-[210px]"
+        >
+          <div className="font-bold text-slate-200 border-b border-obs-borderSubtle pb-1">
             {pData.date} ({locationName})
           </div>
           <div className="flex justify-between items-center text-cyan-400">
             <span>Observed:</span>
-            <span className="font-mono font-bold">
-              {pData.value !== null ? `${pData.value} ${meta.units}` : "N/A"}
+            <span className="font-mono font-bold tabular-nums">
+              {pData.value !== null && pData.value !== undefined ? `${pData.value.toFixed(2)} ${meta.units}` : "N/A"}
             </span>
           </div>
           {pData.baseline_anomaly !== null && pData.baseline_anomaly !== undefined && (
             <div className="flex justify-between items-center text-slate-300">
               <span>Anomaly:</span>
-              <span className={`font-mono font-medium ${pData.baseline_anomaly >= 0 ? "text-red-400" : "text-blue-400"}`}>
-                {pData.baseline_anomaly >= 0 ? `+${pData.baseline_anomaly}` : pData.baseline_anomaly} {meta.units}
+              <span
+                className={`font-mono font-medium tabular-nums ${
+                  pData.baseline_anomaly >= 0 ? "text-red-400" : "text-blue-400"
+                }`}
+              >
+                {formatAnomaly(pData.baseline_anomaly, meta.units)}
               </span>
             </div>
           )}
-          {pData.sens_trend_value && showSensSlope && (
+          {pData.sens_trend_value != null && showSensSlope && (
             <div className="flex justify-between items-center text-emerald-400">
               <span>Sen's Trend:</span>
-              <span className="font-mono">{pData.sens_trend_value} {meta.units}</span>
+              <span className="font-mono tabular-nums">{pData.sens_trend_value.toFixed(2)} {meta.units}</span>
             </div>
           )}
-          {pData.ols_trend_value && showOLS && (
+          {pData.ols_trend_value != null && showOLS && (
             <div className="flex justify-between items-center text-indigo-400">
               <span>OLS Fit:</span>
-              <span className="font-mono">{pData.ols_trend_value} {meta.units}</span>
+              <span className="font-mono tabular-nums">{pData.ols_trend_value.toFixed(2)} {meta.units}</span>
             </div>
           )}
-          {pData.rolling_mean_5yr && show5YrAvg && (
+          {pData.rolling_mean_5yr != null && show5YrAvg && (
             <div className="flex justify-between items-center text-amber-400">
               <span>5-Yr Mean:</span>
-              <span className="font-mono">{pData.rolling_mean_5yr} {meta.units}</span>
+              <span className="font-mono tabular-nums">{pData.rolling_mean_5yr.toFixed(2)} {meta.units}</span>
             </div>
           )}
         </div>
@@ -82,7 +92,10 @@ export const TimeSeriesChart: React.FC<TimeSeriesChartProps> = ({
   };
 
   return (
-    <div className="bg-[#0b1320] border border-slate-800/80 rounded-xl p-4 sm:p-5 shadow-sm space-y-4">
+    <section
+      aria-label="Historical Time-Series and Trend Line Chart"
+      className="bg-obs-surface1 border border-obs-borderSubtle rounded-2xl p-4 sm:p-5 shadow-sm space-y-4"
+    >
       {/* Chart Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
@@ -94,8 +107,8 @@ export const TimeSeriesChart: React.FC<TimeSeriesChartProps> = ({
           </div>
           <p className="text-xs text-slate-400 mt-0.5">
             {meta.name} ({meta.units}) at {locationName} • Sen's Rate:{" "}
-            <span className="text-cyan-300 font-mono font-bold">
-              {stats.sens_slope_per_decade >= 0 ? `+${stats.sens_slope_per_decade}` : stats.sens_slope_per_decade} {meta.units}/dec
+            <span className="text-cyan-300 font-mono font-bold tabular-nums">
+              {formatSlope(stats.sens_slope_per_decade, meta.units, "decade")}
             </span>
           </p>
         </div>
@@ -106,47 +119,74 @@ export const TimeSeriesChart: React.FC<TimeSeriesChartProps> = ({
             <Layers className="w-3 h-3" />
             Layers:
           </span>
-          <label className="flex items-center gap-1 text-emerald-400 cursor-pointer">
+          <label className="flex items-center gap-1.5 text-emerald-400 cursor-pointer min-h-[30px] px-1.5 py-0.5 rounded hover:bg-slate-800/50">
             <input
               type="checkbox"
               checked={showSensSlope}
               onChange={(e) => setShowSensSlope(e.target.checked)}
-              className="rounded bg-slate-900 border-slate-700 text-emerald-500 focus:ring-0"
+              className="rounded bg-obs-canvas border-slate-700 text-emerald-500 focus:ring-0 focus:ring-offset-0"
             />
             <span>Sen's Slope</span>
           </label>
-          <label className="flex items-center gap-1 text-indigo-400 cursor-pointer">
+          <label className="flex items-center gap-1.5 text-indigo-400 cursor-pointer min-h-[30px] px-1.5 py-0.5 rounded hover:bg-slate-800/50">
             <input
               type="checkbox"
               checked={showOLS}
               onChange={(e) => setShowOLS(e.target.checked)}
-              className="rounded bg-slate-900 border-slate-700 text-indigo-500 focus:ring-0"
+              className="rounded bg-obs-canvas border-slate-700 text-indigo-500 focus:ring-0 focus:ring-offset-0"
             />
             <span>OLS Fit</span>
           </label>
-          <label className="flex items-center gap-1 text-amber-400 cursor-pointer">
+          <label className="flex items-center gap-1.5 text-amber-400 cursor-pointer min-h-[30px] px-1.5 py-0.5 rounded hover:bg-slate-800/50">
             <input
               type="checkbox"
               checked={show5YrAvg}
               onChange={(e) => setShow5YrAvg(e.target.checked)}
-              className="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-0"
+              className="rounded bg-obs-canvas border-slate-700 text-amber-500 focus:ring-0 focus:ring-offset-0"
             />
             <span>5-Yr Mean</span>
           </label>
-          <label className="flex items-center gap-1 text-slate-400 cursor-pointer">
+          <label className="flex items-center gap-1.5 text-slate-400 cursor-pointer min-h-[30px] px-1.5 py-0.5 rounded hover:bg-slate-800/50">
             <input
               type="checkbox"
               checked={showBaseline}
               onChange={(e) => setShowBaseline(e.target.checked)}
-              className="rounded bg-slate-900 border-slate-700 text-slate-500 focus:ring-0"
+              className="rounded bg-obs-canvas border-slate-700 text-slate-500 focus:ring-0 focus:ring-offset-0"
             />
-            <span>Baseline Mean</span>
+            <span>Baseline</span>
           </label>
         </div>
       </div>
 
+      {/* Screen reader data table for accessibility */}
+      <div className="sr-only">
+        <table>
+          <caption>
+            Annual observations and trend values for {meta.name} at {locationName}
+          </caption>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Observed ({meta.units})</th>
+              <th>Sen's Trend ({meta.units})</th>
+              <th>OLS Trend ({meta.units})</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((pt) => (
+              <tr key={pt.date}>
+                <td>{pt.date}</td>
+                <td>{pt.value}</td>
+                <td>{pt.sens_trend_value ?? "N/A"}</td>
+                <td>{pt.ols_trend_value ?? "N/A"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       {/* Recharts Plot */}
-      <div className="h-[340px] w-full">
+      <div className="h-[340px] w-full" aria-hidden="true">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
@@ -176,7 +216,7 @@ export const TimeSeriesChart: React.FC<TimeSeriesChartProps> = ({
                 stroke="#64748b"
                 strokeDasharray="4 4"
                 label={{
-                  value: `Mean: ${baselineMean} ${meta.units}`,
+                  value: `Mean: ${baselineMean.toFixed(2)} ${meta.units}`,
                   position: "insideTopRight",
                   fill: "#94a3b8",
                   fontSize: 10,
@@ -234,6 +274,6 @@ export const TimeSeriesChart: React.FC<TimeSeriesChartProps> = ({
           </ComposedChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </section>
   );
 };

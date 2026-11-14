@@ -2,9 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
-import { VariableSelector } from "@/components/VariableSelector";
-import { LocationSelector } from "@/components/LocationSelector";
-import { TimePeriodSelector } from "@/components/TimePeriodSelector";
+import { ObservatoryConsole } from "@/components/ObservatoryConsole";
 import { EssentialQuestionsCards } from "@/components/EssentialQuestionsCards";
 import { TimeSeriesChart } from "@/components/TimeSeriesChart";
 import { AnomalyChart } from "@/components/AnomalyChart";
@@ -18,7 +16,7 @@ import {
   PointTrendResponse,
   RegionalTrendResponse,
 } from "@/types";
-import { AlertCircle, RefreshCw, BarChart2, Map as MapIcon, GitCompare } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 export default function Home() {
   // Catalogs
@@ -183,7 +181,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#030712] text-slate-100">
+    <div className="min-h-screen flex flex-col bg-obs-canvas text-slate-100">
       <Header
         onOpenMethodology={() => setIsMethodologyOpen(true)}
         onOpenExport={() => setIsExportOpen(true)}
@@ -191,48 +189,38 @@ export default function Home() {
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        {/* Module Controls Grid */}
-        <div className="space-y-4">
-          <VariableSelector
-            variables={variables}
-            selectedVariable={selectedVariable}
-            onSelectVariable={handleSelectVariable}
-            disabled={isLoading}
-          />
-
-          <LocationSelector
-            mode={mode}
-            onSelectMode={(newMode) => {
-              setMode(newMode);
-              if (newMode === "regional") {
-                executeRegionalAnalysis(selectedVariable, startYear, endYear);
-              }
-            }}
-            presets={presets}
-            selectedPresetId={selectedPresetId}
-            onSelectPreset={handleSelectPreset}
-            latitude={latitude}
-            longitude={longitude}
-            onChangeCoordinates={handleChangeCoordinates}
-            disabled={isLoading}
-          />
-
-          <TimePeriodSelector
-            startYear={startYear}
-            endYear={endYear}
-            temporalAggregation={temporalAggregation}
-            onStartYearChange={setStartYear}
-            onEndYearChange={setEndYear}
-            onAggregationChange={(agg) => {
-              setTemporalAggregation(agg);
-              if (mode === "point") {
-                executePointAnalysis(latitude, longitude, selectedVariable, startYear, endYear, agg);
-              }
-            }}
-            onRunAnalysis={handleRunAnalysis}
-            isLoading={isLoading}
-          />
-        </div>
+        {/* Consolidated Scientific Observatory Console */}
+        <ObservatoryConsole
+          variables={variables}
+          selectedVariable={selectedVariable}
+          onSelectVariable={handleSelectVariable}
+          mode={mode}
+          onSelectMode={(newMode) => {
+            setMode(newMode);
+            if (newMode === "regional") {
+              executeRegionalAnalysis(selectedVariable, startYear, endYear);
+            }
+          }}
+          presets={presets}
+          selectedPresetId={selectedPresetId}
+          onSelectPreset={handleSelectPreset}
+          latitude={latitude}
+          longitude={longitude}
+          onChangeCoordinates={handleChangeCoordinates}
+          startYear={startYear}
+          endYear={endYear}
+          temporalAggregation={temporalAggregation}
+          onStartYearChange={setStartYear}
+          onEndYearChange={setEndYear}
+          onAggregationChange={(agg) => {
+            setTemporalAggregation(agg);
+            if (mode === "point") {
+              executePointAnalysis(latitude, longitude, selectedVariable, startYear, endYear, agg);
+            }
+          }}
+          onRunAnalysis={handleRunAnalysis}
+          isLoading={isLoading}
+        />
 
         {/* Error Alert */}
         {error && (
@@ -297,12 +285,12 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-900 bg-[#050b14] py-6 text-center text-xs text-slate-500">
+      <footer className="border-t border-obs-borderSubtle bg-obs-surface1 py-6 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 space-y-2">
           <p>
-            TerraTrend • Developed for the 2026 NASA Space Apps Challenge ("Be an Earth System Trend Detective")
+            TerraTrend • Developed by CODEVERSE for the 2026 NASA Space Apps Challenge ("Be an Earth System Trend Detective")
           </p>
-          <p className="text-[11px] text-slate-600">
+          <p className="text-[11px] text-slate-500">
             Powered by NASA Langley Research Center POWER Project & NASA GMAO MERRA-2 Atmospheric Reanalysis.
           </p>
         </div>
