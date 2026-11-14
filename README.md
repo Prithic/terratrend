@@ -4,98 +4,85 @@
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI%20%7C%20SciPy%20%7C%20Pandas-009688.svg)](https://fastapi.tiangolo.com)
 [![Next.js](https://img.shields.io/badge/Frontend-Next.js%2014%20%7C%20TypeScript%20%7C%20Tailwind-black.svg)](https://nextjs.org)
 [![Tests](https://img.shields.io/badge/Tests-Pytest%20Passing%20(9%2F9)-brightgreen.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> **Official Solution for the 2026 NASA Space Apps Challenge:**  
-> **"Be an Earth System Trend Detective"**
-
----
-
-## 1. Product Vision & Essential Acceptance Criteria
-
-**TerraTrend** is an open, evidence-grounded scientific intelligence platform designed to discover, quantify, statistically evaluate, and explain historical Earth-system changes using official **NASA Earth Observations and Meteorological Assimilation Data (MERRA-2 & CERES)**.
-
-TerraTrend is engineered to definitively answer the **Four Essential NASA Questions**:
-
-| Essential NASA Question | TerraTrend Scientific Resolution |
-| :--- | :--- |
-| **1. WHAT is changing?** | Identifies the physical Earth parameter (e.g., 2m Air Temperature, Precipitation, Solar Irradiance), its baseline climatological mean, and direction of shift. |
-| **2. WHERE is it changing?** | Pins changes to precise coordinates, station locations, or native 0.5° × 0.625° NASA MERRA-2 grid cells across regional terrain. |
-| **3. HOW MUCH is it changing?** | Computes the non-parametric **Sen's Slope Estimator** (rate/decade and rate/year) with 95% rank-based confidence intervals and total period change, contrasted with parametric OLS linear regression ($R^2$). |
-| **4. ARE the changes statistically significant?** | Conducts rank-based **Mann-Kendall Trend Testing** ($S$, $\text{Var}(S)$, normalized $Z$, two-tailed $p$-value), adjusts for serial autocorrelation ($r_1$), and controls spatial multiple-testing via **Benjamini-Hochberg False Discovery Rate (FDR)**. |
+> **Official Submission for the 2026 NASA Space Apps Challenge:**  
+> **Challenge:** "Be an Earth System Trend Detective"  
+> **Team:** CODEVERSE  
 
 ---
 
-## 2. Scientific Data Strategy & Lineage
+## 1. Problem Statement
 
-TerraTrend rejects fabricated data and synthetic mocks. All analyses are executed directly against official NASA resources:
-
-- **Primary Source:** [NASA POWER Monthly API](https://power.larc.nasa.gov/docs/services/api/temporal/monthly/) (Langley Research Center)
-- **Lineage:**
-  - **MERRA-2:** Modern-Era Retrospective Analysis for Research and Applications, Version 2 (NASA GMAO). Assimilates spaceborne sounders (AIRS, AMSU), microwave radiometers, and global meteorological observations.
-  - **CERES:** Clouds and the Earth's Radiant Energy System (NASA Langley) for all-sky surface downward solar irradiance (`ALLSKY_SFC_SW_DWN`).
-  - **Precipitation:** MERRA-2 corrected with CPC gauge observations (`PRECTOTCORR`).
-- **Observational Period:** 1981–2024 (up to 44 continuous years).
-- **Study Demonstration Region:** Tamil Nadu, India (encompassing Western Ghats orographic gradients, central Kaveri agricultural basin, and Coromandel coastal zones).
-  - *Demonstration Stations:* Coimbatore, Chennai, Madurai, Tiruchirappalli, Salem, Kanyakumari, Ooty (Nilgiris).
+Detecting meaningful long-term trends across Earth's climate system is challenging. Climate records exhibit natural decadal variability, missing values, extreme weather outliers, and spatial heterogeneity. Casual observers and non-specialists frequently struggle with:
+1. Identifying whether an observed environmental shift is real or merely short-term noise.
+2. Distinguishing between practical physical magnitude and rigorous statistical significance.
+3. Interpreting raw multi-dimensional reanalysis products without specialized domain tools.
+4. Avoiding the multiple-testing fallacy when analyzing spatial grids across large geographic regions.
 
 ---
 
-## 3. Statistical Methodology
+## 2. Project Overview
 
-### A. Non-Parametric Mann-Kendall Test
-The Mann-Kendall test tests the null hypothesis ($H_0$) of no monotonic trend versus the alternative ($H_1$) of an upward or downward monotonic trend:
+**TerraTrend** is an open-source, evidence-grounded Earth-system intelligence platform. It enables researchers, educators, policymakers, and citizen scientists to query historical satellite and atmospheric assimilation records, visualize multi-decade trajectories, execute rank-based non-parametric trend tests, and generate grounded natural-language scientific explanations.
 
-$$S = \sum_{k=1}^{n-1} \sum_{j=k+1}^n \text{sgn}(x_j - x_k)$$
+The platform answers the **Four Essential NASA Questions**:
 
-Variance with tie correction:
-$$\text{Var}(S) = \frac{n(n-1)(2n+5) - \sum_{t} t(t-1)(2t+5)}{18}$$
-
-Standardized test statistic:
-$$Z = \begin{cases} \frac{S - 1}{\sqrt{\text{Var}(S)}} & \text{if } S > 0 \\ 0 & \text{if } S = 0 \\ \frac{S + 1}{\sqrt{\text{Var}(S)}} & \text{if } S < 0 \end{cases}$$
-
-Two-tailed significance:
-$$p = 2 \times [1 - \Phi(|Z|)]$$
-
-### B. Sen's Slope Estimator & 95% Confidence Interval
-Calculates the median of all pairwise slopes:
-$$Q_{k} = \frac{x_j - x_i}{j - i} \quad \text{for all } 1 \le i < j \le n$$
-$$\text{Sen's Slope} = \text{median}(Q)$$
-
-Two-sided 95% rank confidence interval derived from $C_\alpha = Z_{1-\alpha/2} \times \sqrt{\text{Var}(S)}$.
-
-### C. Serial Autocorrelation Correction
-Calculates sample lag-1 autocorrelation ($r_1$). When $|r_1| > 1.96 / \sqrt{N}$, modified Mann-Kendall variance inflation adjustments (Hamed & Rao 1998 / Yue & Wang 2004) are applied to eliminate false rejections driven by multi-year climate persistence.
-
-### D. Benjamini-Hochberg False Discovery Rate (FDR)
-Controls family-wise false discoveries when analyzing dozens of regional spatial grid cells simultaneously ($\text{FDR} \le 0.05$).
-
----
-
-## 4. Key Scientific Findings in Study Region (1981–2023)
-
-| Location | Variable | Sen's Rate | Mann-Kendall $Z$ | $p$-value | Significance ($\alpha=0.05$) |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Madurai** | T2M (Temperature) | **+0.170 °C/decade** | $+2.20$ | **$p = 0.0279$** | **STATISTICALLY SIGNIFICANT WARMING** |
-| **Chennai** | T2M (Temperature) | $+0.060$ °C/decade | $+1.79$ | $p = 0.0734$ | Borderline / Inconclusive |
-| **Coimbatore** | T2M (Temperature) | $+0.080$ °C/decade | $+1.34$ | $p = 0.1802$ | Natural Decadal Variability (Western Ghats Gap) |
-
-*Honest Scientific Distinction:* TerraTrend accurately identifies that while Madurai has experienced statistically significant warming ($p < 0.05$), Coimbatore's observed trend does not yet reach 95% significance due to interannual orographic buffering.
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    THE 4 ESSENTIAL NASA TREND QUESTIONS                     │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  1. WHAT is changing?                                                       │
+│     Identifies the physical variable, baseline climatological mean, and    │
+│     direction of change.                                                    │
+│                                                                             │
+│  2. WHERE is it changing?                                                   │
+│     Pins changes to station coordinates or native 0.5° × 0.625° NASA        │
+│     MERRA-2 assimilation grid cells.                                        │
+│                                                                             │
+│  3. HOW MUCH is it changing?                                                │
+│     Calculates Sen's slope rate (/decade and /year), non-parametric 95%     │
+│     confidence intervals, and cumulative period shift.                     │
+│                                                                             │
+│  4. ARE the changes statistically significant?                              │
+│     Conducts Mann-Kendall rank tests, checks lag-1 autocorrelation (r₁),    │
+│     and controls spatial False Discovery Rate (Benjamini-Hochberg FDR).     │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 5. Technology Stack & Architecture
+## 3. Core Capabilities
+
+- **Direct NASA Ingestion:** Seamless integration with NASA POWER Monthly and Regional APIs, accessing 44 continuous years (1981–2024) of MERRA-2 and CERES data.
+- **Fill-Value & Missing-Data Filters:** Automatic detection and sanitization of `-999.0` fill values.
+- **Robust Statistical Engine:**
+  - Non-parametric **Mann-Kendall test** with tie-corrected variance and two-tailed $p$-value.
+  - Non-parametric **Sen's Slope Estimator** with rank-based 95% confidence intervals.
+  - Parametric **Ordinary Least Squares (OLS)** linear regression for comparison ($R^2$).
+  - **Serial Autocorrelation Check** ($r_1$) and modified Mann-Kendall test (Hamed & Rao 1998 / Yue & Wang 2004).
+  - Spatial **Benjamini-Hochberg False Discovery Rate (FDR)** control for regional multi-cell domains.
+- **Interactive Visualization Suite:**
+  - Historical time series with toggleable trend layers (Sen's slope, OLS fit, 5-year running average, climatological baseline).
+  - Diverging anomaly charts (red/blue).
+  - High-performance Leaflet spatial maps rendering 66 native MERRA-2 grid cells with local vs. FDR significance toggles.
+- **Automated Research Export:** One-click download of full datasets as `.csv` or formatted executive briefs as `.md`.
+
+---
+
+## 4. Architecture & System Flow
 
 ```
                   ┌──────────────────────────────────────────────┐
                   │          TERRATREND FRONTEND                 │
-                  │   Next.js 14 (App Router) + TypeScript       │
+                  │   Next.js 14 (App Router) + TypeScript 5     │
                   │   Tailwind CSS + Recharts + Leaflet Maps     │
                   └──────────────────────┬───────────────────────┘
                                          │ Reverse Proxy /api/*
                                          ▼
                   ┌──────────────────────────────────────────────┐
                   │           TERRATREND BACKEND                 │
-                  │     FastAPI + Pydantic + Uvicorn             │
+                  │     FastAPI + Pydantic v2 + Uvicorn          │
                   └──────────────┬───────────────────────────────┘
                                  │
          ┌───────────────────────┴───────────────────────┐
@@ -110,75 +97,167 @@ Controls family-wise false discoveries when analyzing dozens of regional spatial
 └─────────────────────────────────┘
 ```
 
+For complete technical details, see [docs/architecture.md](docs/architecture.md).
+
 ---
 
-## 6. Quickstart Guide
+## 5. NASA Datasets & Source Lineage
+
+| Parameter Identifier | Scientific Variable Name | Units | Original Source | Dataset Lineage | Resolution |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`T2M`** | Temperature at 2 Meters | $^\circ\text{C}$ | NASA GMAO MERRA-2 | Atmospheric assimilation (`tavgM_2d_slv_Nx`) | $0.5^\circ \times 0.625^\circ$ |
+| **`T2M_MAX`** | Maximum Daily 2m Temperature | $^\circ\text{C}$ | NASA GMAO MERRA-2 | Daily maximum aggregation (`statM_2d_slv_Nx`) | $0.5^\circ \times 0.625^\circ$ |
+| **`T2M_MIN`** | Minimum Daily 2m Temperature | $^\circ\text{C}$ | NASA GMAO MERRA-2 | Daily minimum aggregation (`statM_2d_slv_Nx`) | $0.5^\circ \times 0.625^\circ$ |
+| **`PRECTOTCORR`** | Precipitation Corrected | $\text{mm/day}$ | NASA MERRA-2 + CPC | Surface flux corrected with global CPC gauges | $0.5^\circ \times 0.625^\circ$ |
+| **`WS10M`** | Wind Speed at 10 Meters | $\text{m/s}$ | NASA GMAO MERRA-2 | Horizontal wind vector magnitude | $0.5^\circ \times 0.625^\circ$ |
+| **`ALLSKY_SFC_SW_DWN`** | Surface Solar Downward Flux | $\text{kW-hr/m}^2/\text{day}$ | NASA CERES / FLASHFlux | Clouds & Earth Radiant Energy System SYN1deg | $1.0^\circ \times 1.0^\circ$ |
+| **`RH2M`** | Relative Humidity at 2 Meters | $\%$ | NASA GMAO MERRA-2 | Derived from specific humidity & pressure | $0.5^\circ \times 0.625^\circ$ |
+
+For full variable documentation, see [docs/data-sources.md](docs/data-sources.md).
+
+---
+
+## 6. Statistical Methodology
+
+### Mann-Kendall Non-Parametric Trend Test
+$$S = \sum_{k=1}^{n-1} \sum_{j=k+1}^n \text{sgn}(x_j - x_k)$$
+
+$$\text{Var}(S) = \frac{n(n-1)(2n+5) - \sum_{t} t(t-1)(2t+5)}{18}$$
+
+$$Z = \begin{cases} \frac{S - 1}{\sqrt{\text{Var}(S)}} & \text{if } S > 0 \\ 0 & \text{if } S = 0 \\ \frac{S + 1}{\sqrt{\text{Var}(S)}} & \text{if } S < 0 \end{cases}$$
+
+Two-tailed significance:
+$$p = 2 \times [1 - \Phi(|Z|)]$$
+
+### Sen's Slope Estimator & 95% Confidence Interval
+$$Q_k = \frac{x_j - x_i}{j - i} \quad \text{for all } 1 \le i < j \le n$$
+$$\text{Sen's Slope} = \text{median}(Q)$$
+
+Two-sided 95% rank confidence interval derived from $C_\alpha = Z_{1-\alpha/2} \times \sqrt{\text{Var}(S)}$.
+
+For full mathematical proofs, see [docs/methodology.md](docs/methodology.md).
+
+---
+
+## 7. Study Region & Verified Findings (1981–2023)
+
+Demonstration focus: **Tamil Nadu, India** ($8.5^\circ\text{N} - 13.5^\circ\text{N}, 76.5^\circ\text{E} - 80.5^\circ\text{E}$), spanning coastal, riverine, and Western Ghats montane ecosystems.
+
+### Station Verification Benchmark
+
+| Location | Coordinates | Sen's Slope Rate | 95% Confidence Interval | OLS Slope ($R^2$) | Mann-Kendall $Z$ | $p$-value | Significance ($\alpha=0.05$) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Madurai** | $9.93^\circ\text{N}, 78.12^\circ\text{E}$ | **$+0.170^\circ\text{C/dec}$** | $[+0.023, +0.313]$ | $+0.164^\circ\text{C/dec}$ ($R^2=0.15$) | $+2.20$ | **$p = 0.0279$** | **STATISTICALLY SIGNIFICANT WARMING** |
+| **Chennai** | $13.08^\circ\text{N}, 80.27^\circ\text{E}$ | $+0.060^\circ\text{C/dec}$ | $[-0.004, +0.131]$ | $+0.059^\circ\text{C/dec}$ ($R^2=0.08$) | $+1.79$ | $p = 0.0734$ | Borderline Non-Significant |
+| **Coimbatore** | $11.02^\circ\text{N}, 76.96^\circ\text{E}$ | $+0.080^\circ\text{C/dec}$ | $[-0.026, +0.203]$ | $+0.079^\circ\text{C/dec}$ ($R^2=0.06$) | $+1.34$ | $p = 0.1802$ | Inconclusive / Not Significant |
+
+### Scientific Discussion on Coimbatore
+Coimbatore's 43-year observational record demonstrates a modest estimated slope ($+0.080^\circ\text{C/decade}$), but the trend does not reach 95% statistical significance ($p = 0.1802$).
+> **Scientific Caveat:** We treat regional orographic moderation (such as Western Ghats windward/leeward gap effects) as an **unconfirmed working hypothesis** rather than an established physical fact. At the $0.5^\circ$ resolution of MERRA-2, complex mountain pass micro-climates cannot be resolved without fine-scale meso-scale modeling or dense in-situ station networks.
+
+### Regional Grid Analysis (66 Native MERRA-2 Cells)
+- **Domain Mean Sen's Slope:** $+0.110^\circ\text{C/decade}$
+- **Cell Rate Range:** $+0.014^\circ\text{C/decade}$ to $+0.344^\circ\text{C/decade}$
+- **Unadjusted Significant Cells ($\alpha = 0.05$):** 29 of 66 cells ($43.9\%$)
+- **FDR Corrected Significant Cells ($q = 0.05$):** 24 of 66 cells ($36.4\%$)
+
+For full validation tables, see [docs/validation.md](docs/validation.md).
+
+---
+
+## 8. Installation & Local Development
 
 ### Prerequisites
-- Python 3.10+
-- Node.js 18+ (Node 20+ recommended)
+- **Python 3.10+** (Python 3.11 recommended)
+- **Node.js 18+** (Node.js 20+ recommended)
 
-### 1. Backend Setup & Run
+### 1. Clone Repository
 ```bash
-# Navigate to backend and install dependencies
-cd backend
-pip install -r requirements.txt
+git clone https://github.com/codeverse/terratrend.git
+cd terratrend
+```
 
-# Run the FastAPI server on port 8000
+### 2. Backend Setup
+```bash
+cd backend
+python -m venv venv
+
+# Windows Powershell:
+.\venv\Scripts\activate
+# Linux / macOS:
+source venv/bin/activate
+
+pip install -r requirements.txt
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 API Documentation will be live at: `http://127.0.0.1:8000/docs`
 
-### 2. Frontend Setup & Run
+### 3. Frontend Setup
 ```bash
-# Navigate to frontend and install dependencies
-cd frontend
+cd ../frontend
 npm install
-
-# Start development server
 npm run dev
-# Or build and run production
-npm run build
-npm start
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 7. Automated Test Suite
+## 9. API Documentation & Endpoints
 
-TerraTrend includes comprehensive unit and integration tests verifying API response parsing, missing data handling, Sen's slope, Mann-Kendall significance, and live NASA POWER queries:
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | Health check endpoint |
+| `GET` | `/api/variables` | Returns supported variables with complete NASA metadata |
+| `GET` | `/api/locations` | Returns preset demonstration stations and regional bounding boxes |
+| `POST` | `/api/trend/point` | Executes point trend analysis (OLS, Mann-Kendall, Sen's slope, 95% CI) |
+| `POST` | `/api/trend/regional` | Executes spatial grid analysis across bounding boxes with Benjamini-Hochberg FDR |
 
+---
+
+## 10. Automated Tests & Reproducibility
+
+Execute the complete automated test suite:
 ```bash
-# Set python path and execute pytest
+# Set PYTHONPATH to backend directory
 $env:PYTHONPATH="backend"   # Windows Powershell
-# or: export PYTHONPATH="backend"  # Linux / macOS
+# export PYTHONPATH="backend" # Linux / macOS
 
 python -m pytest backend/tests -v
 ```
 
-Test Results:
-- `test_get_variables` — PASSED
-- `test_get_locations` — PASSED
-- `test_point_trend_real_nasa_query_madurai_significant` — PASSED (Verified $p < 0.05$)
-- `test_point_trend_real_nasa_query_coimbatore` — PASSED (Verified $p > 0.05$)
-- `test_ols_and_mann_kendall_positive_trend` — PASSED
-- `test_mann_kendall_no_trend` — PASSED
-- `test_missing_data_diagnostics_and_fill_value` — PASSED (-999.0 fill value handling)
-- `test_benjamini_hochberg_fdr` — PASSED (FDR spatial multi-testing vector)
-- `test_lag1_autocorrelation` — PASSED
+All 9 test cases pass:
+- `test_get_variables`
+- `test_get_locations`
+- `test_point_trend_real_nasa_query_madurai_significant`
+- `test_point_trend_real_nasa_query_coimbatore`
+- `test_ols_and_mann_kendall_positive_trend`
+- `test_mann_kendall_no_trend`
+- `test_missing_data_diagnostics_and_fill_value`
+- `test_benjamini_hochberg_fdr`
+- `test_lag1_autocorrelation`
 
 ---
 
-## 8. NASA Data Attribution & Citations
+## 11. Scientific Limitations & Uncertainty
 
-1. **NASA POWER Project:**
-   NASA Langley Research Center (LaRC) POWER Project, funded through the NASA Earth Science/Applied Science Program. [https://power.larc.nasa.gov](https://power.larc.nasa.gov)
-2. **MERRA-2 Reanalysis:**
-   Gelaro, R., et al. (2017). *The Modern-Era Retrospective Analysis for Research and Applications, Version 2 (MERRA-2)*. Journal of Climate, 30(14), 5419-5454. doi:10.1175/JCLI-D-16-0758.1.
-3. **Mann-Kendall & Sen's Slope:**
-   - Mann, H. B. (1945). *Nonparametric tests against trend*. Econometrica, 245-259.
-   - Kendall, M. G. (1975). *Rank Correlation Methods*. Charles Griffin, London.
-   - Sen, P. K. (1968). *Estimates of the regression coefficient based on Kendall's tau*. J. Amer. Statist. Assoc., 63(324), 1379-1389.
-   - Hamed, K. H., & Rao, A. R. (1998). *A modified Mann-Kendall trend test for autocorrelated data*. Journal of Hydrology, 204(1-4), 182-196.
-   - Benjamini, Y., & Hochberg, Y. (1995). *Controlling the false discovery rate: a practical and powerful approach to multiple testing*. J. R. Stat. Soc. Ser. B, 57(1), 289-300.
+1. **Spatial Scale:** MERRA-2's $0.5^\circ \times 0.625^\circ$ resolution averages atmospheric dynamics over $\approx 2,500\text{ km}^2$. Urban micro-climates and steep topography are smoothed.
+2. **Assimilation Model Dependency:** Reanalysis assimilates satellite sounders and conventional weather stations through the NASA GEOS model. Surface variables are model diagnostics rather than raw in-situ readings.
+3. **Serial Autocorrelation:** Multi-year oscillations (e.g., ENSO) can bias short records. We provide lag-1 autocorrelation diagnostics and modified Mann-Kendall adjustments to address this.
+
+---
+
+## 12. Team & Acknowledgements
+
+Developed by **CODEVERSE** for the 2026 NASA International Space Apps Challenge.
+Special thanks to:
+- The **NASA POWER Project Team** at NASA Langley Research Center.
+- The **NASA Global Modeling and Assimilation Office (GMAO)** for MERRA-2.
+- The **NASA CERES Science Team**.
+
+---
+
+## 13. License & Citation
+
+- **Code:** Licensed under the [MIT License](LICENSE).
+- **NASA Data:** Public domain under [NASA Open Data Policy](https://www.nasa.gov/open/data.html).
+- **Citation:** See [CITATION.cff](CITATION.cff).
