@@ -2,7 +2,61 @@
  * Centralized Design Tokens & Scientific Visualization Configuration
  * Standards: Impeccable Design Guidelines & IBM Carbon Scientific Data Rules
  * WCAG 2.2 AA Contrast Compliant
+ * Supports Scientific Editorial (Light) and Earth Observatory (Dark) Palettes
  */
+
+export type AppTheme = "editorial" | "observatory";
+export type AppAudienceMode = "explore" | "research";
+
+export const EXPLORE_VARIABLE_INFO: Record<string, {
+  friendlyName: string;
+  category: "Temperature" | "Hydrology" | "Wind" | "Solar & Energy" | "Atmosphere";
+  friendlyDescription: string;
+  analogy: string;
+}> = {
+  T2M: {
+    friendlyName: "Air Temperature",
+    category: "Temperature",
+    friendlyDescription: "Average outdoor temperature measured at 2 meters above ground level.",
+    analogy: "How warm or cool the ambient air feels across ordinary days.",
+  },
+  T2M_MAX: {
+    friendlyName: "Daytime Peak Temperature",
+    category: "Temperature",
+    friendlyDescription: "The maximum temperature recorded during midday and afternoon hours.",
+    analogy: "Daytime heatwave stress and extreme heat exposure.",
+  },
+  T2M_MIN: {
+    friendlyName: "Nighttime Low Temperature",
+    category: "Temperature",
+    friendlyDescription: "The lowest temperature reached just before dawn.",
+    analogy: "Nighttime cooling relief for sleep, agriculture, and urban heat dissipation.",
+  },
+  PRECTOTCORR: {
+    friendlyName: "Rainfall & Precipitation",
+    category: "Hydrology",
+    friendlyDescription: "Daily rain and water rate, calibrated against official ground rain gauges.",
+    analogy: "Monsoon strength, drinking water reservoirs, and agricultural irrigation.",
+  },
+  WS10M: {
+    friendlyName: "Surface Wind Speed",
+    category: "Wind",
+    friendlyDescription: "Horizontal wind speed measured at 10 meters above the ground.",
+    analogy: "Atmospheric breeze, regional storm airflow, and wind energy generation.",
+  },
+  ALLSKY_SFC_SW_DWN: {
+    friendlyName: "Solar Sunlight Energy",
+    category: "Solar & Energy",
+    friendlyDescription: "Total sunlight energy striking the ground under all sky and cloud conditions.",
+    analogy: "Solar power yield, plant photosynthesis, and surface warming.",
+  },
+  RH2M: {
+    friendlyName: "Air Humidity",
+    category: "Atmosphere",
+    friendlyDescription: "Percentage of moisture present in the air relative to maximum saturation.",
+    analogy: "Muggy vs crisp air feeling, affecting heat index and sweat evaporation.",
+  },
+};
 
 export const DESIGN_TOKENS = {
   // Scientific Surface Elevation Colors
@@ -85,6 +139,6 @@ export const DESIGN_TOKENS = {
     compactTargetPx: 36,       // Desktop compact control envelope
     chartHeightPx: 320,
     anomalyChartHeightPx: 180,
-    mapHeightPx: 420,
+    mapHeightPx: 440,
   },
 } as const;

@@ -16,9 +16,21 @@ import {
   PointTrendResponse,
   RegionalTrendResponse,
 } from "@/types";
+import { AppAudienceMode, AppTheme } from "@/constants/design-tokens";
 import { AlertCircle } from "lucide-react";
 
 export default function Home() {
+  // Theme and audience modes
+  const [theme, setTheme] = useState<AppTheme>("editorial");
+  const [audienceMode, setAudienceMode] = useState<AppAudienceMode>("explore");
+
+  // Sync html and body background to theme
+  useEffect(() => {
+    const bg = theme === "editorial" ? "#fbfaf7" : "#040810";
+    document.documentElement.style.backgroundColor = bg;
+    document.body.style.backgroundColor = bg;
+  }, [theme]);
+
   // Catalogs
   const [variables, setVariables] = useState<Record<string, VariableMetadata>>({});
   const [presets, setPresets] = useState<LocationPreset[]>([]);
@@ -180,12 +192,20 @@ export default function Home() {
     }
   };
 
+  const isEditorial = theme === "editorial";
+
   return (
-    <div className="min-h-screen flex flex-col bg-obs-canvas text-slate-100">
+    <div className={`min-h-screen flex flex-col transition-colors ${
+      isEditorial ? "bg-[#fbfaf7] text-stone-900" : "bg-obs-canvas text-slate-100"
+    }`}>
       <Header
         onOpenMethodology={() => setIsMethodologyOpen(true)}
         onOpenExport={() => setIsExportOpen(true)}
         cacheHit={pointData?.cache_hit}
+        audienceMode={audienceMode}
+        onAudienceModeChange={setAudienceMode}
+        theme={theme}
+        onThemeChange={setTheme}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
@@ -220,6 +240,8 @@ export default function Home() {
           }}
           onRunAnalysis={handleRunAnalysis}
           isLoading={isLoading}
+          audienceMode={audienceMode}
+          theme={theme}
         />
 
         {/* Error Alert */}
@@ -240,6 +262,8 @@ export default function Home() {
             <EssentialQuestionsCards
               explanation={pointData.scientific_explanation}
               stats={pointData.statistics}
+              theme={theme}
+              audienceMode={audienceMode}
             />
 
             {/* Visualizations Grid */}
@@ -249,12 +273,16 @@ export default function Home() {
                 meta={pointData.variable_metadata}
                 stats={pointData.statistics}
                 locationName={pointData.location.name}
+                theme={theme}
+                audienceMode={audienceMode}
               />
 
               <AnomalyChart
                 data={pointData.timeseries}
                 meta={pointData.variable_metadata}
                 baselineMean={pointData.statistics.diagnostics.baseline_mean}
+                theme={theme}
+                audienceMode={audienceMode}
               />
             </div>
 
@@ -262,6 +290,8 @@ export default function Home() {
             <StatisticsTable
               stats={pointData.statistics}
               meta={pointData.variable_metadata}
+              theme={theme}
+              audienceMode={audienceMode}
             />
           </div>
         )}
@@ -272,6 +302,8 @@ export default function Home() {
             {/* Regional 4 Essential NASA Questions */}
             <EssentialQuestionsCards
               explanation={regionalData.scientific_explanation}
+              theme={theme}
+              audienceMode={audienceMode}
             />
 
             {/* Regional Map */}
@@ -279,18 +311,22 @@ export default function Home() {
               gridPoints={regionalData.grid_points}
               meta={regionalData.variable_metadata}
               summary={regionalData.summary_statistics}
+              theme={theme}
+              audienceMode={audienceMode}
             />
           </div>
         )}
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-obs-borderSubtle bg-obs-surface1 py-6 text-center text-xs text-slate-500">
+      <footer className={`border-t py-6 text-center text-xs transition-colors ${
+        isEditorial ? "bg-[#faf9f5] border-[#e6e4df] text-stone-500" : "bg-obs-surface1 border-obs-borderSubtle text-slate-500"
+      }`}>
         <div className="max-w-7xl mx-auto px-4 space-y-2">
           <p>
             TerraTrend • Developed by CODEVERSE for the 2026 NASA Space Apps Challenge ("Be an Earth System Trend Detective")
           </p>
-          <p className="text-[11px] text-slate-500">
+          <p className="text-[11px]">
             Powered by NASA Langley Research Center POWER Project & NASA GMAO MERRA-2 Atmospheric Reanalysis.
           </p>
         </div>

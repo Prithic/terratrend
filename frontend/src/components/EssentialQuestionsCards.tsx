@@ -3,17 +3,24 @@
 import React, { useState } from "react";
 import { HelpCircle, CheckCircle2, AlertTriangle, ChevronDown, ChevronUp, ShieldCheck } from "lucide-react";
 import { ScientificExplanation, TrendStatistics } from "@/types";
+import { AppAudienceMode, AppTheme } from "@/constants/design-tokens";
 
 interface EssentialQuestionsCardsProps {
   explanation: ScientificExplanation;
   stats?: TrendStatistics;
+  theme?: AppTheme;
+  audienceMode?: AppAudienceMode;
 }
 
 export const EssentialQuestionsCards: React.FC<EssentialQuestionsCardsProps> = ({
   explanation,
   stats,
+  theme = "editorial",
+  audienceMode = "explore",
 }) => {
   const [showLimitations, setShowLimitations] = useState(false);
+  const isEditorial = theme === "editorial";
+  const isExplore = audienceMode === "explore";
 
   const isSig = stats?.is_statistically_significant ?? explanation.question_are_changes_significant.startsWith("YES");
 
@@ -21,23 +28,35 @@ export const EssentialQuestionsCards: React.FC<EssentialQuestionsCardsProps> = (
     switch (tier) {
       case "High Confidence":
         return (
-          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 shadow-sm shadow-emerald-900/30">
+          <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
+            isEditorial
+              ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+              : "bg-emerald-950/80 text-emerald-400 border-emerald-500/40"
+          }`}>
             <CheckCircle2 className="w-3.5 h-3.5" />
-            {tier}
+            {isExplore ? "Verified Signal" : tier}
           </span>
         );
       case "Moderate Confidence":
         return (
-          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-950/80 text-amber-400 border border-amber-500/40 shadow-sm shadow-amber-900/30">
+          <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
+            isEditorial
+              ? "bg-amber-50 text-amber-800 border-amber-300"
+              : "bg-amber-950/80 text-amber-400 border-amber-500/40"
+          }`}>
             <AlertTriangle className="w-3.5 h-3.5" />
-            {tier}
+            {isExplore ? "Emerging Trend" : tier}
           </span>
         );
       default:
         return (
-          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-obs-surface2 text-slate-300 border border-obs-borderSubtle">
+          <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
+            isEditorial
+              ? "bg-stone-100 text-stone-700 border-stone-300"
+              : "bg-obs-surface2 text-slate-300 border-obs-borderSubtle"
+          }`}>
             <HelpCircle className="w-3.5 h-3.5" />
-            {tier}
+            {isExplore ? "Natural Variation" : tier}
           </span>
         );
     }
@@ -46,19 +65,29 @@ export const EssentialQuestionsCards: React.FC<EssentialQuestionsCardsProps> = (
   return (
     <section
       aria-labelledby="essential-questions-title"
-      className="bg-obs-surface1 border border-cyan-900/40 rounded-2xl p-5 sm:p-6 shadow-xl shadow-cyan-950/20 space-y-5"
+      className={`rounded-2xl p-5 sm:p-6 shadow-sm border transition-colors space-y-5 ${
+        isEditorial
+          ? "bg-white border-[#e6e4df] text-stone-900 shadow-stone-200/50"
+          : "bg-obs-surface1 border-cyan-900/40 text-slate-100 shadow-cyan-950/20"
+      }`}
     >
       {/* Top Banner: 4 Essential NASA Questions Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-obs-borderSubtle gap-3">
+      <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b gap-3 ${
+        isEditorial ? "border-[#eceae5]" : "border-obs-borderSubtle"
+      }`}>
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400 font-mono">
+            <span className={`text-[10px] font-bold uppercase tracking-widest font-mono ${
+              isEditorial ? "text-blue-800" : "text-cyan-400"
+            }`}>
               NASA CHALLENGE CORE ACCEPTANCE CRITERIA
             </span>
           </div>
           <h2
             id="essential-questions-title"
-            className="text-lg font-extrabold text-white tracking-tight mt-0.5"
+            className={`text-lg font-extrabold tracking-tight mt-0.5 ${
+              isEditorial ? "text-stone-900" : "text-white"
+            }`}
           >
             The 4 Essential Earth System Questions
           </h2>
@@ -69,40 +98,64 @@ export const EssentialQuestionsCards: React.FC<EssentialQuestionsCardsProps> = (
       {/* 4 Essential Questions Grid with Distinct Left Accent Strips */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* 1. WHAT is changing? */}
-        <div className="bg-obs-surface2 border-l-4 border-l-cyan-500 border border-obs-borderSubtle rounded-xl p-4 transition-all hover:border-slate-700">
-          <div className="flex items-center gap-2 mb-2 text-cyan-400 font-bold text-xs uppercase tracking-wider">
-            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 text-[11px] font-mono font-bold">
+        <div className={`border-l-4 border-l-cyan-600 border rounded-xl p-4 transition-all ${
+          isEditorial ? "bg-[#faf9f6] border-[#e7e5e0]" : "bg-obs-surface2 border-obs-borderSubtle"
+        }`}>
+          <div className={`flex items-center gap-2 mb-2 font-bold text-xs uppercase tracking-wider ${
+            isEditorial ? "text-cyan-800" : "text-cyan-400"
+          }`}>
+            <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[11px] font-mono font-bold ${
+              isEditorial ? "bg-cyan-100 text-cyan-900 border border-cyan-300" : "bg-cyan-950 text-cyan-300 border border-cyan-800"
+            }`}>
               1
             </span>
             <span>WHAT is changing?</span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-medium">
+          <p className={`text-xs sm:text-sm leading-relaxed font-medium ${
+            isEditorial ? "text-stone-800" : "text-slate-200"
+          }`}>
             {explanation.question_what}
           </p>
         </div>
 
         {/* 2. WHERE is it changing? */}
-        <div className="bg-obs-surface2 border-l-4 border-l-indigo-500 border border-obs-borderSubtle rounded-xl p-4 transition-all hover:border-slate-700">
-          <div className="flex items-center gap-2 mb-2 text-indigo-400 font-bold text-xs uppercase tracking-wider">
-            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-800 text-[11px] font-mono font-bold">
+        <div className={`border-l-4 border-l-indigo-600 border rounded-xl p-4 transition-all ${
+          isEditorial ? "bg-[#faf9f6] border-[#e7e5e0]" : "bg-obs-surface2 border-obs-borderSubtle"
+        }`}>
+          <div className={`flex items-center gap-2 mb-2 font-bold text-xs uppercase tracking-wider ${
+            isEditorial ? "text-indigo-800" : "text-indigo-400"
+          }`}>
+            <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[11px] font-mono font-bold ${
+              isEditorial ? "bg-indigo-100 text-indigo-900 border border-indigo-300" : "bg-indigo-950 text-indigo-300 border border-indigo-800"
+            }`}>
               2
             </span>
             <span>WHERE is it changing?</span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-medium">
+          <p className={`text-xs sm:text-sm leading-relaxed font-medium ${
+            isEditorial ? "text-stone-800" : "text-slate-200"
+          }`}>
             {explanation.question_where}
           </p>
         </div>
 
         {/* 3. HOW MUCH is it changing? */}
-        <div className="bg-obs-surface2 border-l-4 border-l-amber-500 border border-obs-borderSubtle rounded-xl p-4 transition-all hover:border-slate-700">
-          <div className="flex items-center gap-2 mb-2 text-amber-400 font-bold text-xs uppercase tracking-wider">
-            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-amber-950 text-amber-300 border border-amber-800 text-[11px] font-mono font-bold">
+        <div className={`border-l-4 border-l-amber-600 border rounded-xl p-4 transition-all ${
+          isEditorial ? "bg-[#faf9f6] border-[#e7e5e0]" : "bg-obs-surface2 border-obs-borderSubtle"
+        }`}>
+          <div className={`flex items-center gap-2 mb-2 font-bold text-xs uppercase tracking-wider ${
+            isEditorial ? "text-amber-800" : "text-amber-400"
+          }`}>
+            <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[11px] font-mono font-bold ${
+              isEditorial ? "bg-amber-100 text-amber-900 border border-amber-300" : "bg-amber-950 text-amber-300 border border-amber-800"
+            }`}>
               3
             </span>
             <span>HOW MUCH is it changing?</span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-medium">
+          <p className={`text-xs sm:text-sm leading-relaxed font-medium ${
+            isEditorial ? "text-stone-800" : "text-slate-200"
+          }`}>
             {explanation.question_how_much}
           </p>
         </div>
@@ -111,62 +164,86 @@ export const EssentialQuestionsCards: React.FC<EssentialQuestionsCardsProps> = (
         <div
           className={`border-l-4 border rounded-xl p-4 transition-all ${
             isSig
-              ? "bg-emerald-950/20 border-l-emerald-500 border-emerald-500/40 shadow-sm shadow-emerald-950/30"
-              : "bg-obs-surface2 border-l-slate-600 border-obs-borderSubtle"
+              ? isEditorial
+                ? "bg-emerald-50/70 border-l-emerald-600 border-emerald-300 shadow-sm"
+                : "bg-emerald-950/20 border-l-emerald-500 border-emerald-500/40 shadow-sm"
+              : isEditorial
+                ? "bg-[#faf9f6] border-l-stone-400 border-[#e7e5e0]"
+                : "bg-obs-surface2 border-l-slate-600 border-obs-borderSubtle"
           }`}
         >
           <div className="flex items-center justify-between mb-2">
-            <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-wider ${isSig ? "text-emerald-400" : "text-slate-300"}`}>
-              <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[11px] font-mono font-bold ${isSig ? "bg-emerald-950 text-emerald-300 border border-emerald-800" : "bg-slate-800 text-slate-400 border border-slate-700"}`}>
+            <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-wider ${
+              isSig
+                ? isEditorial ? "text-emerald-900" : "text-emerald-400"
+                : isEditorial ? "text-stone-700" : "text-slate-300"
+            }`}>
+              <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[11px] font-mono font-bold ${
+                isSig
+                  ? isEditorial ? "bg-emerald-200 text-emerald-950 border border-emerald-400" : "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                  : isEditorial ? "bg-stone-200 text-stone-700 border border-stone-300" : "bg-slate-800 text-slate-400 border border-slate-700"
+              }`}>
                 4
               </span>
               <span>ARE changes statistically significant?</span>
             </div>
             {isSig ? (
-              <span className="text-[10px] font-bold font-mono uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              <span className={`text-[10px] font-bold font-mono uppercase px-2 py-0.5 rounded border ${
+                isEditorial ? "bg-emerald-100 text-emerald-900 border-emerald-300" : "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+              }`}>
                 Significant (p &lt; 0.05)
               </span>
             ) : (
-              <span className="text-[10px] font-bold font-mono uppercase px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
-                Not Significant
+              <span className={`text-[10px] font-bold font-mono uppercase px-2 py-0.5 rounded border ${
+                isEditorial ? "bg-stone-200 text-stone-700 border-stone-300" : "bg-slate-800 text-slate-400 border border-slate-700"
+              }`}>
+                Natural Variation
               </span>
             )}
           </div>
-          <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-medium">
+          <p className={`text-xs sm:text-sm leading-relaxed font-medium ${
+            isEditorial ? "text-stone-800" : "text-slate-200"
+          }`}>
             {explanation.question_are_changes_significant}
           </p>
         </div>
       </div>
 
       {/* Synthesis Section */}
-      <div className="bg-obs-surface2 border border-obs-borderSubtle rounded-xl p-4 text-xs text-slate-300 space-y-2">
-        <div className="flex items-center gap-2 text-slate-100 font-bold">
-          <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
+      <div className={`border rounded-xl p-4 text-xs space-y-2 ${
+        isEditorial ? "bg-[#f7f6f2] border-[#e6e4df] text-stone-800" : "bg-obs-surface2 border-obs-borderSubtle text-slate-300"
+      }`}>
+        <div className="flex items-center gap-2 font-bold">
+          <ShieldCheck className={`w-4 h-4 shrink-0 ${isEditorial ? "text-blue-700" : "text-cyan-400"}`} />
           <span>Scientific Synthesis & Climatological Grounding</span>
         </div>
-        <p className="leading-relaxed text-slate-300">
+        <p className={`leading-relaxed ${isEditorial ? "text-stone-700" : "text-slate-300"}`}>
           {explanation.scientific_synthesis}
         </p>
       </div>
 
       {/* Expandable Limitations & Citation */}
-      <div className="border-t border-obs-borderSubtle pt-3">
+      <div className={`border-t pt-3 ${isEditorial ? "border-[#eceae5]" : "border-obs-borderSubtle"}`}>
         <button
           type="button"
           onClick={() => setShowLimitations(!showLimitations)}
           aria-expanded={showLimitations}
           aria-controls="scientific-limitations-drawer"
-          className="min-h-[36px] flex items-center justify-between w-full text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400 rounded-md px-1"
+          className={`min-h-[36px] flex items-center justify-between w-full text-xs font-semibold rounded-md px-1 transition-colors ${
+            isEditorial ? "text-stone-600 hover:text-stone-900" : "text-slate-400 hover:text-slate-200"
+          }`}
         >
           <span className="flex items-center gap-1.5">
-            <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
             <span>Scientific Limitations & Data Lineage Audit</span>
           </span>
           {showLimitations ? <ChevronUp className="w-4 h-4 shrink-0" /> : <ChevronDown className="w-4 h-4 shrink-0" />}
         </button>
 
         {showLimitations && (
-          <div id="scientific-limitations-drawer" className="mt-3 space-y-3 text-xs text-slate-400 animate-fadeIn">
+          <div id="scientific-limitations-drawer" className={`mt-3 space-y-3 text-xs animate-fadeIn ${
+            isEditorial ? "text-stone-600" : "text-slate-400"
+          }`}>
             <ul className="list-disc pl-5 space-y-1.5">
               {explanation.scientific_limitations.map((lim, i) => (
                 <li key={i} className="leading-relaxed">
@@ -175,8 +252,12 @@ export const EssentialQuestionsCards: React.FC<EssentialQuestionsCardsProps> = (
               ))}
             </ul>
 
-            <div className="p-3 bg-obs-canvas rounded-lg border border-obs-borderSubtle text-[11px] font-mono text-slate-400">
-              <span className="text-slate-300 font-bold block mb-1">Source Citation:</span>
+            <div className={`p-3 rounded-lg border text-[11px] font-mono ${
+              isEditorial ? "bg-[#f5f4ef] border-[#dedad2] text-stone-700" : "bg-obs-canvas border-obs-borderSubtle text-slate-400"
+            }`}>
+              <span className={`font-bold block mb-1 ${isEditorial ? "text-stone-900" : "text-slate-300"}`}>
+                Source Citation:
+              </span>
               {explanation.citation}
             </div>
           </div>

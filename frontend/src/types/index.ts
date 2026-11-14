@@ -122,6 +122,13 @@ export interface RegionalSummaryStatistics {
   min_slope_per_decade: number;
   max_slope_per_decade: number;
   fdr_significant_count?: number | null;
+  positive_cells_count?: number;
+  negative_cells_count?: number;
+  has_opposing_trends?: boolean;
+  sig_positive_cells_count?: number;
+  sig_negative_cells_count?: number;
+  fdr_positive_cells_count?: number;
+  fdr_negative_cells_count?: number;
 }
 
 export interface RegionalTrendResponse {

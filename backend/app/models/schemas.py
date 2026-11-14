@@ -138,6 +138,13 @@ class RegionalSummaryStatistics(BaseModel):
     min_slope_per_decade: float
     max_slope_per_decade: float
     fdr_significant_count: Optional[int] = None  # Benjamini-Hochberg FDR corrected count
+    positive_cells_count: int = 0
+    negative_cells_count: int = 0
+    has_opposing_trends: bool = False
+    sig_positive_cells_count: int = 0
+    sig_negative_cells_count: int = 0
+    fdr_positive_cells_count: int = 0
+    fdr_negative_cells_count: int = 0
 
 class RegionalTrendResponse(BaseModel):
     status: str

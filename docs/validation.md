@@ -116,7 +116,7 @@ Since $|r_1| < 0.299$, serial correlation does not inflate the test statistic, c
 
 ## 7. Automated Test Suite Execution
 
-All 9 validation test cases executed via Pytest pass with zero errors:
+All validation test cases executed via Pytest pass with zero errors:
 ```
 backend/tests/test_nasa_integration.py::test_get_variables PASSED
 backend/tests/test_nasa_integration.py::test_get_locations PASSED
@@ -128,3 +128,29 @@ backend/tests/test_statistics.py::test_missing_data_diagnostics_and_fill_value P
 backend/tests/test_statistics.py::test_benjamini_hochberg_fdr PASSED
 backend/tests/test_statistics.py::test_lag1_autocorrelation PASSED
 ```
+
+---
+
+## 8. Multi-Parameter Validation & Opposing Trends Discovery (1981–2023)
+
+In accordance with Sprint A requirements, four additional Earth-system parameters were evaluated across the 66-cell regional grid:
+
+1. **Precipitation (`PRECTOTCORR`):**  
+   - Units: `mm/day` (rate) and `mm/year` ($365.25 \times \text{rate}$).
+   - **Bifurcated Dipole:** 55 wetting cells vs 11 drying cells.
+   - Significant drying confirmed at $8.5^\circ\text{N}, 77.5^\circ\text{E}$ (Sen's slope $-0.438\text{ mm/day/decade}$, $p = 0.0059$, FDR significant).
+   - Significant wetting confirmed at $10.0^\circ\text{N}, 80.0^\circ\text{E}$ (Sen's slope $+0.329\text{ mm/day/decade}$, $p = 0.0001$, FDR significant).
+   - Confirms the central NASA premise that identical large-scale climate forcing generates opposing regional trends due to orographic and maritime controls.
+
+2. **Surface Wind Speed (`WS10M`):**  
+   - Units: `m/s`.
+   - **Atmospheric Stilling:** 57 of 66 cells show negative slopes; 44 cells remain statistically significant under FDR control ($q = 0.05$).
+   - Regional mean rate: $-0.047\text{ m/s per decade}$.
+
+3. **Relative Humidity (`RH2M`):**  
+   - Units: `%`.
+   - 57 cells show increasing humidity (27 FDR significant); 9 cells show decreasing humidity (2 FDR significant).
+
+4. **Surface Solar Irradiance (`ALLSKY_SFC_SW_DWN`):**  
+   - Units: `kW-hr/m²/day` (evaluated 1984–2023).
+   - 18 brightening cells (6 FDR significant) along the Coromandel marine corridor vs 12 dimming cells (3 FDR significant) inland.

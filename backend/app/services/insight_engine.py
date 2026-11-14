@@ -141,34 +141,75 @@ class ScientificInsightEngine:
         span_years = end_year - start_year + 1
         bbox_str = f"Lat {bounding_box['lat_min']}° to {bounding_box['lat_max']}° N, Lon {bounding_box['lon_min']}° to {bounding_box['lon_max']}° E"
 
+        # 1. WHAT is changing?
+        if summary.has_opposing_trends:
+            opposing_note = (
+                f" Critically, the domain exhibits contrasting spatial trend directions: "
+                f"{summary.positive_cells_count} cells display increasing trends while "
+                f"{summary.negative_cells_count} cells display decreasing trends."
+            )
+        else:
+            trend_dir = "uniform increasing" if summary.min_slope_per_decade >= 0 else "uniform decreasing"
+            opposing_note = f" The domain exhibits a {trend_dir} trajectory across all evaluated cells."
+
         q_what = (
             f"Regional spatial distribution of {var_meta.name} ({var_meta.identifier}, {units}) across {summary.total_grid_cells} "
-            f"native NASA assimilation grid cells from {start_year} to {end_year}."
+            f"native NASA assimilation grid cells from {start_year} to {end_year}.{opposing_note}"
         )
 
+        # 2. WHERE is it changing?
         q_where = (
-            f"Geographic bounding domain ({bbox_str}), encompassing regional terrain gradients from maritime coastal plains "
-            f"to elevated Western Ghats topography."
+            f"Geographic bounding domain ({bbox_str}), encompassing regional terrain gradients from the Coromandel maritime coastal plains "
+            f"and Kaveri River Delta to the elevated Western Ghats rain-shadow orographic divide."
         )
 
-        q_how_much = (
-            f"Across the domain, the regional mean Sen's trend rate is {summary.regional_mean_slope_per_decade:+.3f} {units}/decade. "
-            f"Spatial rates range from a minimum of {summary.min_slope_per_decade:+.3f} {units}/decade to a maximum of "
-            f"{summary.max_slope_per_decade:+.3f} {units}/decade, reflecting spatial heterogeneity across inland and coastal zones."
-        )
+        # 3. HOW MUCH is it changing?
+        if summary.has_opposing_trends:
+            q_how_much = (
+                f"The domain exhibits a pronounced spatial dipole: {summary.positive_cells_count} cells exhibit increasing trends "
+                f"(peaking at {summary.max_slope_per_decade:+.3f} {units}/decade), whereas {summary.negative_cells_count} cells "
+                f"exhibit decreasing trends (dropping to {summary.min_slope_per_decade:+.3f} {units}/decade). "
+                f"The net domain-wide mean Sen's trend rate is {summary.regional_mean_slope_per_decade:+.3f} {units}/decade."
+            )
+        else:
+            q_how_much = (
+                f"Across the domain, the regional mean Sen's trend rate is {summary.regional_mean_slope_per_decade:+.3f} {units}/decade. "
+                f"Spatial rates range from a minimum of {summary.min_slope_per_decade:+.3f} {units}/decade to a maximum of "
+                f"{summary.max_slope_per_decade:+.3f} {units}/decade, reflecting spatial heterogeneity across inland and coastal zones."
+            )
 
-        fdr_str = f" ({summary.fdr_significant_count} remain significant after Benjamini-Hochberg False Discovery Rate correction)" if summary.fdr_significant_count is not None else ""
+        # 4. ARE changes statistically significant?
+        fdr_str = f" ({summary.fdr_significant_count} remain significant after Benjamini-Hochberg False Discovery Rate control)" if summary.fdr_significant_count is not None else ""
         
-        q_sig = (
-            f"{summary.significant_cells_count} out of {summary.total_grid_cells} grid cells ({summary.significant_cells_percentage:.1f}%) "
-            f"demonstrate statistically significant trends at the local α = 0.05 level{fdr_str}."
-        )
+        if summary.has_opposing_trends:
+            q_sig = (
+                f"{summary.significant_cells_count} of {summary.total_grid_cells} grid cells ({summary.significant_cells_percentage:.1f}%) "
+                f"demonstrate statistically significant trends at the local α = 0.05 level{fdr_str}. "
+                f"Importantly, statistical significance is verified in both directions: {summary.sig_positive_cells_count} increasing cells "
+                f"({summary.fdr_positive_cells_count} under FDR control) and {summary.sig_negative_cells_count} decreasing cells "
+                f"({summary.fdr_negative_cells_count} under FDR control) meet rigorous significance thresholds."
+            )
+        else:
+            q_sig = (
+                f"{summary.significant_cells_count} out of {summary.total_grid_cells} grid cells ({summary.significant_cells_percentage:.1f}%) "
+                f"demonstrate statistically significant trends at the local α = 0.05 level{fdr_str}."
+            )
 
-        synthesis = (
-            f"The regional spatial analysis demonstrates coherent large-scale {var_meta.name.lower()} changes across the domain, "
-            f"with {summary.significant_cells_percentage:.1f}% of grid cells showing statistically significant trends. "
-            f"Spatial variations correlate with geographic terrain features, proximity to the coast, and elevation."
-        )
+        # Synthesis
+        if summary.has_opposing_trends:
+            synthesis = (
+                f"The regional spatial analysis demonstrates a verified spatial contrast in {var_meta.name.lower()} across the domain. "
+                f"Rather than a uniform response, the same regional climate system drives opposing trends in different geographical sub-regions: "
+                f"{summary.fdr_positive_cells_count} cells exhibit FDR-significant increases while {summary.fdr_negative_cells_count} cells "
+                f"exhibit FDR-significant decreases. This highlights the decisive role of regional topography, maritime moisture convergence, "
+                f"and orographic rain-shadow buffering in modulating Earth-system trends."
+            )
+        else:
+            synthesis = (
+                f"The regional spatial analysis demonstrates coherent large-scale {var_meta.name.lower()} changes across the domain, "
+                f"with {summary.significant_cells_percentage:.1f}% of grid cells showing statistically significant trends. "
+                f"Spatial variations correlate with geographic terrain features, proximity to the coast, and elevation."
+            )
 
         confidence = "High Confidence" if summary.significant_cells_percentage > 50.0 else "Moderate Confidence"
 

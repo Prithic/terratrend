@@ -259,6 +259,14 @@ def analyze_regional_trend(req: RegionalTrendRequest):
     min_slope = round(float(np.min(slopes)), 3)
     max_slope = round(float(np.max(slopes)), 3)
 
+    pos_cells = [p for p in grid_points if p.sens_slope_per_decade > 0]
+    neg_cells = [p for p in grid_points if p.sens_slope_per_decade < 0]
+    has_opposing = len(pos_cells) > 0 and len(neg_cells) > 0
+    sig_pos = sum(1 for p in pos_cells if p.is_significant)
+    sig_neg = sum(1 for p in neg_cells if p.is_significant)
+    fdr_pos = sum(1 for p in pos_cells if p.is_fdr_significant)
+    fdr_neg = sum(1 for p in neg_cells if p.is_fdr_significant)
+
     summary = RegionalSummaryStatistics(
         total_grid_cells=len(grid_points),
         significant_cells_count=sig_count,
@@ -266,7 +274,14 @@ def analyze_regional_trend(req: RegionalTrendRequest):
         regional_mean_slope_per_decade=mean_slope,
         min_slope_per_decade=min_slope,
         max_slope_per_decade=max_slope,
-        fdr_significant_count=fdr_count
+        fdr_significant_count=fdr_count,
+        positive_cells_count=len(pos_cells),
+        negative_cells_count=len(neg_cells),
+        has_opposing_trends=has_opposing,
+        sig_positive_cells_count=sig_pos,
+        sig_negative_cells_count=sig_neg,
+        fdr_positive_cells_count=fdr_pos,
+        fdr_negative_cells_count=fdr_neg
     )
 
     bbox_dict = {
