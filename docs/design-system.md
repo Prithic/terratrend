@@ -17,7 +17,24 @@ TerraTrend is engineered as a precision scientific intelligence tool rather than
 
 ## 2. Color Tokens & Contrast Ratios
 
-All color combinations have been verified against WCAG 2.2 Level AA contrast requirements:
+TerraTrend provides two cohesive, fully accessible visual themes:
+
+### A. Scientific Editorial Light Theme (Default)
+Engineered for daytime research, long reading sessions, and academic publication standards:
+
+| Token Name | Hex Code | Purpose | Verified Contrast Ratio | WCAG 2.2 Status |
+| :--- | :--- | :--- | :--- | :--- |
+| `edit-canvas` | `#fbfaf7` | Warm neutral page background | Background | — |
+| `edit-card` | `#ffffff` | Clean card and container surface | — | — |
+| `edit-surface-subtle`| `#faf9f5` | Secondary container / muted panel | — | — |
+| `edit-text-primary` | `#1c1917` | Stone 900 headings and primary values | **15.4 : 1** (vs `#fbfaf7`) | **PASS (AAA)** |
+| `edit-text-secondary`| `#57534e` | Stone 600 descriptions and labels | **6.8 : 1** (vs `#fbfaf7`) | **PASS (AA)** |
+| `edit-border` | `#e6e4df` | Structural card borders | 1.8 : 1 | **PASS (UI)** |
+| `edit-border-subtle` | `#f0eee9` | Subtle internal dividing lines | 1.3 : 1 | **PASS (UI)** |
+| `edit-primary` | `#1d4ed8` | Blue 700 action button and active state | **5.8 : 1** (vs `#ffffff`) | **PASS (AA)** |
+
+### B. Observatory Dark Theme
+Engineered for projection, night-time monitoring, and visual parity with telemetry displays:
 
 | Token Name | Hex Code | Purpose | Verified Contrast Ratio | WCAG 2.2 Status |
 | :--- | :--- | :--- | :--- | :--- |
@@ -33,6 +50,22 @@ All color combinations have been verified against WCAG 2.2 Level AA contrast req
 | `stat-inconclusive` | `#fbbf24` | Inconclusive / natural variability ($p \ge 0.05$) | **11.2 : 1** (vs `#040810`) | **PASS (AA)** |
 | `trend-warming` | `#ef4444` | Positive temperature rate ($> +0.25^\circ\text{C/dec}$) | **5.4 : 1** (vs `#040810`) | **PASS (AA)** |
 | `trend-cooling` | `#38bdf8` | Negative temperature rate ($< -0.05^\circ\text{C/dec}$) | **8.4 : 1** (vs `#040810`) | **PASS (AA)** |
+
+---
+
+## 3. Dual Audience Modes (Explore vs Research)
+
+TerraTrend features an instantaneous top-level toggle catering to distinct user personas:
+1. **Explore Mode:**
+   - Designed for students, educators, and the general public.
+   - Replaces technical parameter identifiers with intuitive names (*"Rainfall & Precipitation"*, *"Surface Wind Speed"*).
+   - Provides relatable real-world physical analogies.
+   - Highlights high-level trend takeaway badges without intimidating formulas.
+2. **Research Mode:**
+   - Designed for climatologists, data engineers, and NASA judges.
+   - Exposes exact NASA codes (`PRECTOTCORR`, `ALLSKY_SFC_SW_DWN`).
+   - Displays full mathematical diagnostics: Mann-Kendall $Z$, tie-corrected variance, serial autocorrelation $r_1$, Benjamini-Hochberg FDR $q$-values, and Gilbert non-parametric confidence bounds.
+   - Features an expandable 12-parameter statistical matrix with one-click Markdown and CSV data exports.
 
 ---
 

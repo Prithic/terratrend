@@ -324,7 +324,7 @@ export default function Home() {
       }`}>
         <div className="max-w-7xl mx-auto px-4 space-y-2">
           <p>
-            TerraTrend • Developed by CODEVERSE for the 2026 NASA Space Apps Challenge ("Be an Earth System Trend Detective")
+            TerraTrend • Developed by CODEVERSE for the 2026 NASA Space Apps Challenge (&quot;Be an Earth System Trend Detective&quot;)
           </p>
           <p className="text-[11px]">
             Powered by NASA Langley Research Center POWER Project & NASA GMAO MERRA-2 Atmospheric Reanalysis.

@@ -77,7 +77,7 @@ export const StatisticsTable: React.FC<StatisticsTableProps> = ({
           isEditorial ? "bg-[#faf9f6] border-[#e7e5e0]" : "bg-obs-surface2 border-obs-borderSubtle"
         }`}>
           <span className={`font-medium block mb-1 ${isEditorial ? "text-stone-500" : "text-slate-400"}`}>
-            Sen's Slope Rate
+            Sen&apos;s Slope Rate
           </span>
           <div className="text-base font-bold font-mono tabular-nums text-emerald-700">
             {formatSlope(stats.sens_slope_per_decade, units, "decade")}
@@ -92,7 +92,7 @@ export const StatisticsTable: React.FC<StatisticsTableProps> = ({
           isEditorial ? "bg-[#faf9f6] border-[#e7e5e0]" : "bg-obs-surface2 border-obs-borderSubtle"
         }`}>
           <span className={`font-medium block mb-1 ${isEditorial ? "text-stone-500" : "text-slate-400"}`}>
-            Sen's 95% Confidence Interval
+            Sen&apos;s 95% Confidence Interval
           </span>
           <div className={`text-xs sm:text-sm font-bold font-mono tabular-nums ${isEditorial ? "text-stone-900" : "text-slate-200"}`}>
             {formatConfidenceInterval(
@@ -222,7 +222,7 @@ export const StatisticsTable: React.FC<StatisticsTableProps> = ({
             Scientific Method Note: Statistical Significance vs Environmental Magnitude
           </span>
           <p className={`text-[11px] ${isEditorial ? "text-stone-600" : "text-slate-400"}`}>
-            <strong className={isEditorial ? "text-stone-900" : "text-slate-300"}>Statistical Significance (p &lt; 0.05)</strong> evaluates whether a trend is reliably distinguishable from natural interannual climate noise. It does not measure physical severity. Conversely, <strong className={isEditorial ? "text-stone-900" : "text-slate-300"}>Trend Magnitude (Sen's Slope)</strong> quantifies the physical rate of change per decade. Even an environmentally meaningful shift may not achieve statistical significance if year-to-year variability or sample variance is high.
+            <strong className={isEditorial ? "text-stone-900" : "text-slate-300"}>Statistical Significance (p &lt; 0.05)</strong> evaluates whether a trend is reliably distinguishable from natural interannual climate noise. It does not measure physical severity. Conversely, <strong className={isEditorial ? "text-stone-900" : "text-slate-300"}>Trend Magnitude (Sen&apos;s Slope)</strong> quantifies the physical rate of change per decade. Even an environmentally meaningful shift may not achieve statistical significance if year-to-year variability or sample variance is high.
           </p>
         </div>
       </div>

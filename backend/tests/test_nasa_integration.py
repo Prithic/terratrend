@@ -1,11 +1,13 @@
 """
-Integration test for TerraTrend API endpoints with live NASA data retrieval and caching.
+Integration tests for TerraTrend API endpoints with NASA data retrieval and caching.
 """
+import pytest
 from fastapi.testclient import TestClient
 from app.main import app
 
 client = TestClient(app)
 
+@pytest.mark.unit
 def test_get_variables():
     response = client.get("/api/variables")
     assert response.status_code == 200
@@ -14,6 +16,7 @@ def test_get_variables():
     assert "PRECTOTCORR" in data
     assert "MERRA-2" in data["T2M"]["original_source"]
 
+@pytest.mark.unit
 def test_get_locations():
     response = client.get("/api/locations")
     assert response.status_code == 200
@@ -24,10 +27,11 @@ def test_get_locations():
     assert "Chennai" in names
     assert "Madurai" in names
 
+@pytest.mark.integration
 def test_point_trend_real_nasa_query_madurai_significant():
     """
-    Test end-to-end point trend calculation with real NASA POWER data for Madurai (1981-2023).
-    Madurai exhibits statistically significant warming (p = 0.0279 < 0.05, Sen's slope +0.17 C/decade).
+    Test end-to-end point trend calculation for Madurai (1981-2023).
+    Verifies calculation of Sen's slope, Mann-Kendall p-value, and 4 questions insight engine.
     """
     req_body = {
         "variable": "T2M",
@@ -56,10 +60,11 @@ def test_point_trend_real_nasa_query_madurai_significant():
     assert "decade" in expl["question_how_much"]
     assert "YES, the observed trend is statistically significant" in expl["question_are_changes_significant"]
 
+@pytest.mark.integration
 def test_point_trend_real_nasa_query_coimbatore():
     """
-    Test Coimbatore (1981-2023) where trend is positive but p = 0.18 > 0.05.
-    Verifies that the scientific explanation honestly and correctly reports non-significance!
+    Test Coimbatore (1981-2023) where trend is positive but does not reach 95% significance (p > 0.05).
+    Verifies that the scientific explanation correctly reports non-significance without false positives.
     """
     req_body = {
         "variable": "T2M",

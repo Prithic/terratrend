@@ -75,13 +75,13 @@ export const MethodologyModal: React.FC<MethodologyModalProps> = ({
         {/* Section 2: Sen's Slope Estimator */}
         <div className="space-y-3 text-xs leading-relaxed">
           <h3 className="text-sm font-bold text-emerald-400 uppercase tracking-wider">
-            2. Sen's Slope Estimator & 95% Confidence Intervals
+            2. Sen&apos;s Slope Estimator & 95% Confidence Intervals
           </h3>
           <p className="text-slate-300">
-            Sen's slope estimator (Sen 1968) calculates the median slope among all pairwise data combinations:
+            Sen&apos;s slope estimator (Sen 1968) calculates the median slope among all pairwise data combinations:
           </p>
           <div className="p-3 bg-obs-canvas rounded-lg border border-obs-borderSubtle font-mono text-[11px] text-emerald-300">
-            Q_k = (x_j - x_i) / (j - i) for all 1 ≤ i &lt; j ≤ n; Sen's Slope = median(Q)
+            Q_k = (x_j - x_i) / (j - i) for all 1 ≤ i &lt; j ≤ n; Sen&apos;s Slope = median(Q)
           </div>
           <p className="text-slate-400">
             A non-parametric 95% two-sided confidence interval is constructed using rank percentiles derived from the standard normal variance of S, avoiding parametric standard error distortions.
@@ -121,7 +121,7 @@ export const MethodologyModal: React.FC<MethodologyModalProps> = ({
               <span className="text-slate-200 font-medium">MERRA-2:</span> Modern-Era Retrospective Analysis for Research and Applications, Version 2, NASA Global Modeling and Assimilation Office (GMAO). Gelaro et al. (2017), Journal of Climate.
             </li>
             <li>
-              <span className="text-slate-200 font-medium">CERES:</span> Clouds and the Earth's Radiant Energy System, NASA Langley Research Center.
+              <span className="text-slate-200 font-medium">CERES:</span> Clouds and the Earth&apos;s Radiant Energy System, NASA Langley Research Center.
             </li>
           </ul>
         </div>

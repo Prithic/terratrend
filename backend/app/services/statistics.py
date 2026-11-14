@@ -103,12 +103,13 @@ class TrendAnalysisEngine:
 
         # 3. Sen's Slope Estimator
         # Calculate Sen's slope and 95% confidence intervals
-        sens_slope_yr = float(mk_res.slope)
+        sens_result = stats.theilslopes(values, years, alpha=1.0 - alpha)
+        sens_slope_yr = float(sens_result.slope)
         sens_slope_dec = sens_slope_yr * 10.0
         
         # Calculate Sen's slope confidence intervals if supported
         # In pymannkendall, mk_res has slope, but let's calculate exact non-parametric CI:
-        ci_lower_yr, ci_upper_yr = cls._calculate_sens_slope_ci(values, mk_var, alpha=alpha)
+        ci_lower_yr, ci_upper_yr = float(sens_result.low_slope), float(sens_result.high_slope)
         sens_ci_lower_dec = ci_lower_yr * 10.0
         sens_ci_upper_dec = ci_upper_yr * 10.0
 
@@ -139,7 +140,7 @@ class TrendAnalysisEngine:
         else:
             sig_label = f"Not Significant (p = {effective_p:.3f} >= 0.05)"
 
-        total_change = sens_slope_yr * span_years
+        total_change = sens_slope_yr * (max_year - min_year)
         pct_change = (total_change / abs(baseline_mean) * 100.0) if abs(baseline_mean) > 1e-6 else None
 
         diagnostics = StatisticalDiagnostics(

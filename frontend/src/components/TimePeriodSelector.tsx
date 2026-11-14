@@ -79,7 +79,7 @@ export const TimePeriodSelector: React.FC<TimePeriodSelectorProps> = ({
             className="w-full bg-slate-900/80 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:border-cyan-500 focus:outline-none"
           >
             <option value="annual">Annual Mean (Standard)</option>
-            <option value="monthly">Monthly Timeseries</option>
+
           </select>
         </div>
       </div>

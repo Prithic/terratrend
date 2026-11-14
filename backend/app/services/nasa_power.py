@@ -20,7 +20,9 @@ class NasaPowerService:
         self.base_url = settings.nasa_power_base_url
         self.cache_dir = settings.cache_dir
         self.cache_ttl_seconds = settings.cache_ttl_hours * 3600
-        self.client = httpx.Client(timeout=45.0, headers={"User-Agent": "TerraTrend-NASA-SpaceApps/1.0"})
+        self.timeout = settings.request_timeout_seconds
+        self.max_retries = settings.request_max_retries
+        self.client = httpx.Client(timeout=self.timeout, headers={"User-Agent": "TerraTrend-NASA-SpaceApps/1.0"})
 
     def _get_cache_path(self, cache_key: str) -> str:
         hashed = hashlib.sha256(cache_key.encode("utf-8")).hexdigest()
@@ -47,6 +49,7 @@ class NasaPowerService:
             wrapper = {
                 "_cached_at_epoch": time.time(),
                 "_cached_at_iso": datetime.now(timezone.utc).isoformat(),
+                "_cache_key": cache_key,
                 "payload": payload
             }
             with open(cache_file, "w", encoding="utf-8") as f:
@@ -84,7 +87,7 @@ class NasaPowerService:
 
         # Attempt with retry for resilience
         last_err = None
-        for attempt in range(3):
+        for attempt in range(self.max_retries):
             try:
                 resp = self.client.get(url, params=params)
                 if resp.status_code == 200:
@@ -145,7 +148,7 @@ class NasaPowerService:
         }
 
         last_err = None
-        for attempt in range(3):
+        for attempt in range(self.max_retries):
             try:
                 resp = self.client.get(url, params=params)
                 if resp.status_code == 200:

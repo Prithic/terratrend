@@ -131,14 +131,14 @@ export const LocationSelector: React.FC<LocationSelectorProps> = ({
         <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-3 text-xs text-slate-300 space-y-2">
           <div className="flex items-center justify-between">
             <span className="font-semibold text-cyan-300">
-              Regional Grid: Tamil Nadu State & Western Ghats Domain
+              Regional Grid: Tamil Nadu area bounding box
             </span>
             <span className="text-[10px] font-mono text-slate-400">
               NASA MERRA-2 Native Grid (0.5° × 0.625°)
             </span>
           </div>
           <p className="text-slate-400 text-[11px]">
-            Covers 35+ native assimilation cells from the Arabian Sea / Western Ghats rain-shadow through the central Kaveri river basin to the Coromandel coast (8.5°N - 13.5°N, 76.5°E - 80.5°E).
+            A rectangular selection that may include neighbouring regions and offshore cells.
           </p>
         </div>
       )}

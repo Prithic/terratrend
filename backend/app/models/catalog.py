@@ -161,12 +161,12 @@ PRESET_LOCATIONS: List[LocationPreset] = [
 REGIONAL_PRESETS = [
     {
         "id": "tamil_nadu",
-        "name": "Tamil Nadu State",
+        "name": "Tamil Nadu area bounding box",
         "lat_min": 8.2,
         "lat_max": 13.5,
         "lon_min": 76.5,
         "lon_max": 80.5,
-        "description": "Comprehensive regional coverage spanning the Coromandel Coast to Western Ghats."
+        "description": "Rectangular regional selection; includes areas outside Tamil Nadu and offshore cells."
     },
     {
         "id": "southern_peninsula",

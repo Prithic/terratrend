@@ -1,3 +1,5 @@
+> **Independent audit warning:** This document contains historical, unverified claims and may describe superseded calculations. Do not cite its numerical findings or provenance assertions until revalidated. See [independent review](codex-independent-review.md).
+
 # TerraTrend — Scientific Validation and Verification Report
 
 **Challenge:** 2026 NASA Space Apps Challenge — *Be an Earth System Trend Detective*  

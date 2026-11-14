@@ -79,7 +79,7 @@ export const TimeSeriesChart: React.FC<TimeSeriesChartProps> = ({
           )}
           {pData.sens_trend_value != null && showSensSlope && (
             <div className="flex justify-between items-center text-emerald-600">
-              <span>Sen's Trend:</span>
+              <span>Sen&apos;s Trend:</span>
               <span className="font-mono tabular-nums">{pData.sens_trend_value.toFixed(2)} {meta.units}</span>
             </div>
           )}
@@ -122,7 +122,7 @@ export const TimeSeriesChart: React.FC<TimeSeriesChartProps> = ({
             </h3>
           </div>
           <p className={`text-xs mt-0.5 ${isEditorial ? "text-stone-500" : "text-slate-400"}`}>
-            {meta.name} ({meta.units}) at {locationName} • Sen's Rate:{" "}
+            {meta.name} ({meta.units}) at {locationName} • Sen&apos;s Rate:{" "}
             <span className={`font-mono font-bold tabular-nums ${isEditorial ? "text-blue-800" : "text-cyan-300"}`}>
               {formatSlope(stats.sens_slope_per_decade, meta.units, "decade")}
             </span>
@@ -142,7 +142,7 @@ export const TimeSeriesChart: React.FC<TimeSeriesChartProps> = ({
               onChange={(e) => setShowSensSlope(e.target.checked)}
               className="rounded text-emerald-600 focus:ring-0"
             />
-            <span>Sen's Slope</span>
+            <span>Sen&apos;s Slope</span>
           </label>
           <label className="flex items-center gap-1.5 text-indigo-700 cursor-pointer min-h-[30px] px-1.5 py-0.5 rounded hover:bg-stone-100">
             <input
@@ -184,7 +184,7 @@ export const TimeSeriesChart: React.FC<TimeSeriesChartProps> = ({
             <tr>
               <th>Year</th>
               <th>Observed ({meta.units})</th>
-              <th>Sen's Trend ({meta.units})</th>
+              <th>Sen&apos;s Trend ({meta.units})</th>
               <th>OLS Trend ({meta.units})</th>
             </tr>
           </thead>

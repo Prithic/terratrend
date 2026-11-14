@@ -257,20 +257,11 @@ export const RegionalMap: React.FC<RegionalMapProps> = ({
                     </div>
                     
                     <div className="flex justify-between gap-3">
-                      <span>Sen's Rate:</span>
+                      <span>Sen&apos;s Rate:</span>
                       <span className="font-mono font-bold tabular-nums">
                         {formatSlope(pt.sens_slope_per_decade, meta.units, "decade")}
                       </span>
                     </div>
-
-                    {meta.identifier === "PRECTOTCORR" && (
-                      <div className="flex justify-between gap-3 text-[10.5px] text-stone-600">
-                        <span>Annual Accumulation:</span>
-                        <span className="font-mono font-semibold tabular-nums">
-                          {(pt.sens_slope_per_decade * 365.25).toFixed(1)} mm/yr/dec
-                        </span>
-                      </div>
-                    )}
 
                     <div className="flex justify-between gap-3">
                       <span>Mann-Kendall p:</span>

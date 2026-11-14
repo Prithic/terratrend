@@ -175,7 +175,7 @@ ${e.citation}
               <span>Full Raw Data (.CSV)</span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Includes complete yearly observations, climatological baseline anomalies, 5-year running averages, Sen's slope line, and OLS regression fit.
+              Includes complete yearly observations, climatological baseline anomalies, 5-year running averages, Sen&apos;s slope line, and OLS regression fit.
             </p>
             <button
               type="button"

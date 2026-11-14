@@ -2,8 +2,10 @@
 Tests for TerraTrend Variable and Location Catalog Integrity.
 Verifies units, data lineages, resolutions, and geographic presets.
 """
+import pytest
 from app.models.catalog import VARIABLES_CATALOG, PRESET_LOCATIONS, REGIONAL_PRESETS
 
+@pytest.mark.unit
 def test_all_seven_variables_exist():
     expected_vars = [
         "T2M",
@@ -23,6 +25,7 @@ def test_all_seven_variables_exist():
         assert "NASA" in meta.original_source or "CERES" in meta.original_source or "MERRA-2" in meta.original_source
         assert "http" in meta.documentation_url
 
+@pytest.mark.unit
 def test_preset_locations_integrity():
     assert len(PRESET_LOCATIONS) >= 7
     ids = [p.id for p in PRESET_LOCATIONS]
@@ -36,6 +39,7 @@ def test_preset_locations_integrity():
         assert len(preset.name) > 0
         assert "Tamil Nadu" in preset.state_or_country
 
+@pytest.mark.unit
 def test_regional_presets_span():
     for region in REGIONAL_PRESETS:
         lat_span = region["lat_max"] - region["lat_min"]

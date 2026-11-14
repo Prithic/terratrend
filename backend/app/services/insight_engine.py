@@ -49,7 +49,7 @@ class ScientificInsightEngine:
 
         # 2. WHERE is it changing?
         q_where = (
-            f"Observed at {loc_name} ({coords_str}), representative of the native MERRA-2 "
+            f"Observed at {loc_name} ({coords_str}), representative of the source "
             f"grid cell ({var_meta.spatial_resolution}) over {location_info.get('state_or_country', 'the selected region')}."
         )
 
@@ -82,7 +82,7 @@ class ScientificInsightEngine:
             q_sig = (
                 f"YES, the observed trend is statistically significant ({stats.significance_label}). "
                 f"The rank-based Mann-Kendall test yields standardized test statistic Z = {stats.mk_z:+.2f} and p = {stats.mk_p_value:.5f}, "
-                f"conclusively rejecting the null hypothesis of no trend at the 95% confidence level (α = 0.05).{autocorr_note}"
+                f"rejecting the null hypothesis of no trend at the 95% confidence level (α = 0.05).{autocorr_note}"
             )
             confidence = "High Confidence" if (stats.diagnostics.missing_percentage < 5.0 and stats.mk_p_value < 0.01) else "Moderate Confidence"
         else:
@@ -99,7 +99,7 @@ class ScientificInsightEngine:
             f"{'robust, statistically significant' if stats.is_statistically_significant else 'statistically non-significant'} "
             f"{'upward' if stats.sens_slope_per_decade > 0 else 'downward'} trajectory in {var_meta.name.lower()}. "
             f"The consistency between the non-parametric Sen's slope ({rate_dec:+.3f} {units}/dec) and OLS slope ({stats.ols_slope_per_decade:+.3f} {units}/dec) "
-            f"verifies that the trend estimate is not driven by isolated extreme weather anomalies."
+            f"does not establish the cause of the estimated trend."
         )
 
         # Scientific Limitations
@@ -158,10 +158,7 @@ class ScientificInsightEngine:
         )
 
         # 2. WHERE is it changing?
-        q_where = (
-            f"Geographic bounding domain ({bbox_str}), encompassing regional terrain gradients from the Coromandel maritime coastal plains "
-            f"and Kaveri River Delta to the elevated Western Ghats rain-shadow orographic divide."
-        )
+        q_where = f"Rectangular geographic bounding domain ({bbox_str}); it is not an administrative boundary."
 
         # 3. HOW MUCH is it changing?
         if summary.has_opposing_trends:
@@ -185,7 +182,7 @@ class ScientificInsightEngine:
             q_sig = (
                 f"{summary.significant_cells_count} of {summary.total_grid_cells} grid cells ({summary.significant_cells_percentage:.1f}%) "
                 f"demonstrate statistically significant trends at the local α = 0.05 level{fdr_str}. "
-                f"Importantly, statistical significance is verified in both directions: {summary.sig_positive_cells_count} increasing cells "
+                f"Importantly, local significance counts by direction are: {summary.sig_positive_cells_count} increasing cells "
                 f"({summary.fdr_positive_cells_count} under FDR control) and {summary.sig_negative_cells_count} decreasing cells "
                 f"({summary.fdr_negative_cells_count} under FDR control) meet rigorous significance thresholds."
             )
@@ -195,21 +192,9 @@ class ScientificInsightEngine:
                 f"demonstrate statistically significant trends at the local α = 0.05 level{fdr_str}."
             )
 
-        # Synthesis
-        if summary.has_opposing_trends:
-            synthesis = (
-                f"The regional spatial analysis demonstrates a verified spatial contrast in {var_meta.name.lower()} across the domain. "
-                f"Rather than a uniform response, the same regional climate system drives opposing trends in different geographical sub-regions: "
-                f"{summary.fdr_positive_cells_count} cells exhibit FDR-significant increases while {summary.fdr_negative_cells_count} cells "
-                f"exhibit FDR-significant decreases. This highlights the decisive role of regional topography, maritime moisture convergence, "
-                f"and orographic rain-shadow buffering in modulating Earth-system trends."
-            )
-        else:
-            synthesis = (
-                f"The regional spatial analysis demonstrates coherent large-scale {var_meta.name.lower()} changes across the domain, "
-                f"with {summary.significant_cells_percentage:.1f}% of grid cells showing statistically significant trends. "
-                f"Spatial variations correlate with geographic terrain features, proximity to the coast, and elevation."
-            )
+        synthesis = (f"Estimated trends vary across the selected bounding box. "
+                     f"{summary.fdr_positive_cells_count} positive and {summary.fdr_negative_cells_count} negative estimates pass the per-variable Benjamini-Hochberg procedure. "
+                     "These exploratory results do not establish causes, and spatial dependence affects interpretation.")
 
         confidence = "High Confidence" if summary.significant_cells_percentage > 50.0 else "Moderate Confidence"
 

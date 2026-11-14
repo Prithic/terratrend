@@ -398,7 +398,7 @@ export const ObservatoryConsole: React.FC<ObservatoryConsoleProps> = ({
                 </span>
               </div>
               <p className={`text-[10px] leading-relaxed ${isEditorial ? "text-stone-500" : "text-slate-400"}`}>
-                Spans 66 cells from the Western Ghats rain-shadow through the Kaveri Basin to the Coromandel marine corridor (8.5°N–13.5°N, 76.5°E–80.5°E).
+                A rectangular selection; neighbouring regions and offshore cells may be included.
               </p>
               <div className={`text-[10px] font-mono pt-1 border-t ${
                 isEditorial ? "border-stone-200 text-emerald-800" : "border-obs-borderSubtle text-emerald-400"
@@ -517,7 +517,7 @@ export const ObservatoryConsole: React.FC<ObservatoryConsoleProps> = ({
                   }`}
                 >
                   <option value="annual">Annual Mean (Standard)</option>
-                  <option value="monthly">Monthly Timeseries</option>
+
                 </select>
               </div>
             )}

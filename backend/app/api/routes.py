@@ -59,6 +59,9 @@ def analyze_point_trend(req: PointTrendRequest):
     if (req.end_year - req.start_year) < 4:
         raise HTTPException(status_code=400, detail="Minimum observation window of 5 years required.")
 
+    if req.temporal_aggregation != "annual":
+        raise HTTPException(status_code=400, detail="Only annual trend analysis is currently supported; monthly trend calculations require seasonal methods.")
+
     var_meta = VARIABLES_CATALOG[req.variable]
 
     try:
@@ -204,12 +207,12 @@ def analyze_regional_trend(req: RegionalTrendRequest):
         try:
             mk = pmk.original_test(non_nan, alpha=0.05)
             mk_p = float(mk.p)
-            sens_dec = float(mk.slope) * 10.0
+            valid_years_for_slope = np.array([yr for yr, v in zip(range(req.start_year, req.end_year + 1), annual_vals) if not np.isnan(v)], dtype=float)
+            from scipy.stats import theilslopes
+            sens_dec = float(theilslopes(non_nan, valid_years_for_slope).slope) * 10.0
             mk_trend = str(mk.trend)
         except Exception:
-            mk_p = 1.0
-            sens_dec = 0.0
-            mk_trend = "no trend"
+            continue
 
         # OLS with true calendar year spacing
         valid_years = np.array([
@@ -232,7 +235,7 @@ def analyze_regional_trend(req: RegionalTrendRequest):
             "mk_p_value": round(mk_p, 5),
             "is_significant": bool(mk_p < 0.05),
             "trend_direction": mk_trend,
-            "total_change": round((sens_dec / 10.0) * span_years, 3)
+            "total_change": round((sens_dec / 10.0) * (valid_years[-1] - valid_years[0]), 3)
         })
 
     if not cell_data:
