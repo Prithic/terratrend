@@ -109,6 +109,7 @@ export interface RegionalGridPoint {
   ols_slope_per_decade: number;
   mk_p_value: number;
   is_significant: boolean;
+  is_fdr_significant?: boolean;
   trend_direction: string;
   total_change: number;
 }

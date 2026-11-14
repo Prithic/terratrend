@@ -204,7 +204,7 @@ export default function Home() {
             mode={mode}
             onSelectMode={(newMode) => {
               setMode(newMode);
-              if (newMode === "regional" && !regionalData) {
+              if (newMode === "regional") {
                 executeRegionalAnalysis(selectedVariable, startYear, endYear);
               }
             }}

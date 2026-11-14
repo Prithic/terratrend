@@ -35,6 +35,7 @@ export const RegionalMap: React.FC<RegionalMapProps> = ({
   summary,
 }) => {
   const [mounted, setMounted] = useState(false);
+  const [filterMode, setFilterMode] = useState<"local" | "fdr">("local");
 
   useEffect(() => {
     setMounted(true);
@@ -67,6 +68,10 @@ export const RegionalMap: React.FC<RegionalMapProps> = ({
     }
   };
 
+  const activeCount = filterMode === "local" 
+    ? summary.significant_cells_count 
+    : (summary.fdr_significant_count ?? summary.significant_cells_count);
+
   return (
     <div className="bg-[#0b1320] border border-slate-800/80 rounded-xl p-4 sm:p-5 shadow-sm space-y-4">
       {/* Map Header */}
@@ -79,19 +84,38 @@ export const RegionalMap: React.FC<RegionalMapProps> = ({
             </h3>
           </div>
           <p className="text-xs text-slate-400 mt-0.5">
-            {gridPoints.length} NASA MERRA-2 Grid Cells • {summary.significant_cells_count} ({summary.significant_cells_percentage}%) Reach Statistical Significance (p &lt; 0.05)
+            {gridPoints.length} NASA MERRA-2 Grid Cells • {activeCount} ({((activeCount / gridPoints.length) * 100).toFixed(1)}%) {filterMode === "local" ? "Local Significant (p &lt; 0.05)" : "FDR Significant (q &lt; 0.05)"}
           </p>
         </div>
 
-        {/* Legend */}
-        <div className="flex items-center gap-4 text-[11px] text-slate-300">
+        {/* Filter Toggle & Legend */}
+        <div className="flex items-center flex-wrap gap-3 text-[11px] text-slate-300">
+          <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5">
+            <button
+              onClick={() => setFilterMode("local")}
+              className={`px-2 py-0.5 rounded text-[10px] font-medium transition-all ${
+                filterMode === "local" ? "bg-cyan-600 text-white" : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              Local (p &lt; 0.05)
+            </button>
+            <button
+              onClick={() => setFilterMode("fdr")}
+              className={`px-2 py-0.5 rounded text-[10px] font-medium transition-all ${
+                filterMode === "fdr" ? "bg-cyan-600 text-white" : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              FDR Adjusted (q &lt; 0.05)
+            </button>
+          </div>
+
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded-full bg-red-500 inline-block ring-2 ring-white/50"></span>
-            <span>p &lt; 0.05 (Significant)</span>
+            <span>Significant</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded-full bg-slate-600 border border-dashed border-slate-400 inline-block"></span>
-            <span>p ≥ 0.05 (Inconclusive)</span>
+            <span>Inconclusive</span>
           </div>
         </div>
       </div>
@@ -111,17 +135,18 @@ export const RegionalMap: React.FC<RegionalMapProps> = ({
 
           {gridPoints.map((pt, idx) => {
             const color = getMarkerColor(pt.sens_slope_per_decade);
+            const isMarkedSig = filterMode === "local" ? pt.is_significant : (pt.is_fdr_significant ?? pt.is_significant);
             return (
               <CircleMarker
                 key={`grid-${idx}`}
                 center={[pt.latitude, pt.longitude]}
-                radius={pt.is_significant ? 12 : 8}
+                radius={isMarkedSig ? 12 : 8}
                 pathOptions={{
                   fillColor: color,
-                  fillOpacity: pt.is_significant ? 0.85 : 0.4,
-                  color: pt.is_significant ? "#ffffff" : "#64748b",
-                  weight: pt.is_significant ? 2 : 1,
-                  dashArray: pt.is_significant ? undefined : "3, 3",
+                  fillOpacity: isMarkedSig ? 0.85 : 0.4,
+                  color: isMarkedSig ? "#ffffff" : "#64748b",
+                  weight: isMarkedSig ? 2 : 1,
+                  dashArray: isMarkedSig ? undefined : "3, 3",
                 }}
               >
                 <Popup className="custom-popup">
@@ -147,9 +172,15 @@ export const RegionalMap: React.FC<RegionalMapProps> = ({
                       </span>
                     </div>
                     <div className="flex justify-between gap-3">
-                      <span>Status:</span>
+                      <span>Local α=0.05:</span>
                       <span className={`font-semibold ${pt.is_significant ? "text-emerald-700" : "text-slate-600"}`}>
-                        {pt.is_significant ? "Significant (p < 0.05)" : "Not Significant"}
+                        {pt.is_significant ? "Significant" : "Not Significant"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between gap-3">
+                      <span>FDR q=0.05:</span>
+                      <span className={`font-semibold ${pt.is_fdr_significant ? "text-emerald-700" : "text-amber-700"}`}>
+                        {pt.is_fdr_significant ? "FDR Significant" : "Not Significant"}
                       </span>
                     </div>
                     <div className="flex justify-between gap-3 border-t pt-1">
