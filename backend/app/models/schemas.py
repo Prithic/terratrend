@@ -117,6 +117,7 @@ class RegionalGridPoint(BaseModel):
     ols_slope_per_decade: float
     mk_p_value: float
     is_significant: bool
+    is_fdr_significant: bool = False
     trend_direction: str
     total_change: float
 

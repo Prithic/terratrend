@@ -166,7 +166,7 @@ def analyze_regional_trend(req: RegionalTrendRequest):
             detail="No spatial grid features returned by NASA POWER for the requested bounding box."
         )
 
-    grid_points: List[RegionalGridPoint] = []
+    cell_data: List[Dict[str, Any]] = []
     p_values: List[float] = []
     slopes: List[float] = []
 
@@ -211,35 +211,47 @@ def analyze_regional_trend(req: RegionalTrendRequest):
             sens_dec = 0.0
             mk_trend = "no trend"
 
-        # OLS
-        x = np.arange(len(non_nan))
+        # OLS with true calendar year spacing
+        valid_years = np.array([
+            yr for yr in range(req.start_year, req.end_year + 1)
+            if not np.isnan(annual_vals[yr - req.start_year])
+        ], dtype=float)
+        x = valid_years - float(req.start_year)
         ols_slope_dec = float(np.polyfit(x, non_nan, 1)[0]) * 10.0
 
         p_values.append(mk_p)
         slopes.append(sens_dec)
 
-        grid_points.append(RegionalGridPoint(
-            latitude=round(lat, 4),
-            longitude=round(lon, 4),
-            elevation_m=round(elevation, 1) if elevation is not None else None,
-            mean_value=round(mean_val, 3),
-            sens_slope_per_decade=round(sens_dec, 3),
-            ols_slope_per_decade=round(ols_slope_dec, 3),
-            mk_p_value=round(mk_p, 5),
-            is_significant=bool(mk_p < 0.05),
-            trend_direction=mk_trend,
-            total_change=round((sens_dec / 10.0) * span_years, 3)
-        ))
+        cell_data.append({
+            "latitude": round(lat, 4),
+            "longitude": round(lon, 4),
+            "elevation_m": round(elevation, 1) if elevation is not None else None,
+            "mean_value": round(mean_val, 3),
+            "sens_slope_per_decade": round(sens_dec, 3),
+            "ols_slope_per_decade": round(ols_slope_dec, 3),
+            "mk_p_value": round(mk_p, 5),
+            "is_significant": bool(mk_p < 0.05),
+            "trend_direction": mk_trend,
+            "total_change": round((sens_dec / 10.0) * span_years, 3)
+        })
 
-    if not grid_points:
+    if not cell_data:
         raise HTTPException(
             status_code=404,
             detail="Insufficient valid observational data across the regional domain."
         )
 
-    # Benjamini-Hochberg FDR correction
+    # Benjamini-Hochberg FDR correction across all spatial cells
     fdr_significant = trend_engine.apply_benjamini_hochberg(p_values, q=0.05)
     fdr_count = sum(fdr_significant)
+
+    grid_points = [
+        RegionalGridPoint(
+            **c,
+            is_fdr_significant=bool(fdr_significant[i])
+        )
+        for i, c in enumerate(cell_data)
+    ]
 
     sig_count = sum(1 for p in grid_points if p.is_significant)
     sig_pct = round((sig_count / len(grid_points)) * 100.0, 1)
