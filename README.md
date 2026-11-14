@@ -11,7 +11,7 @@
 > **NASA Space Apps Challenge 2026 Submission**<br>
 > **Challenge:** [Be an Earth System Trend Detective](https://www.spaceappschallenge.org/2026/challenges/be-an-earth-system-trend-detective/)<br>
 > **Team:** CODEVERSE<br>
-> **Repository:** Public remote pending competition URL configuration
+> **Repository:** [https://github.com/Prithic/terratrend](https://github.com/Prithic/terratrend)
 
 ---
 
@@ -281,6 +281,7 @@ High-resolution screenshots are archived in [`docs/screenshots/final/`](docs/scr
 - **Challenge:** [Be an Earth System Trend Detective](https://www.spaceappschallenge.org/2026/challenges/be-an-earth-system-trend-detective/)
 - **Project Title:** TerraTrend
 - **Team Name:** CODEVERSE
+- **Repository:** [https://github.com/Prithic/terratrend](https://github.com/Prithic/terratrend)
 - **Primary Data Sources:**
   - NASA Prediction of Worldwide Energy Resources (POWER) Project: [https://power.larc.nasa.gov](https://power.larc.nasa.gov)
   - NASA Modern-Era Retrospective analysis for Research and Applications, Version 2 (MERRA-2), GMAO, NASA Goddard Space Flight Center.
