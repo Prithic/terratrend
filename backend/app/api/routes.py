@@ -24,6 +24,11 @@ from app.services.insight_engine import insight_engine
 
 router = APIRouter()
 
+@router.get("/health")
+def api_health():
+    """Health check endpoint for API routes."""
+    return {"status": "healthy", "service": "TerraTrend API"}
+
 @router.get("/variables", response_model=Dict[str, VariableMetadata])
 def get_variables():
     """Retrieve all supported NASA variables with complete scientific lineage metadata."""
