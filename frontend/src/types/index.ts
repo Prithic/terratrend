@@ -19,6 +19,7 @@ export interface LocationPreset {
   latitude: number;
   longitude: number;
   description: string;
+  category?: "global" | "regional";
 }
 
 export interface TimeSeriesPoint {
@@ -78,6 +79,7 @@ export interface ScientificExplanation {
   confidence_tier: "High Confidence" | "Moderate Confidence" | "Inconclusive / Low Signal";
   scientific_limitations: string[];
   citation: string;
+  actionable_impacts?: string[];
 }
 
 export interface PointTrendResponse {

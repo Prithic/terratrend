@@ -109,6 +109,51 @@ class ScientificInsightEngine:
             f"Serial Autocorrelation: Earth system climate time series frequently possess interannual persistence (e.g., ENSO, Indian Ocean Dipole). Modified Mann-Kendall variance adjustments were applied to avoid false positive inflation."
         ]
 
+        # 5. Actionable Decision-Maker & Operational Impacts
+        actionable_impacts = []
+        if "T2M" in var_meta.identifier:
+            if rate_dec > 0:
+                actionable_impacts.append(
+                    f"Thermal Stress & Public Health: A rate of {rate_dec:+.2f} °C/decade projects increased frequency of high wet-bulb thermal events, heightening outdoor occupational risk and peak electrical cooling demand."
+                )
+                actionable_impacts.append(
+                    f"Agronomy & Evaporation: Elevated ambient temperatures accelerate atmospheric evaporative demand, intensifying crop water deficits during critical vegetative stages."
+                )
+            else:
+                actionable_impacts.append(
+                    f"Agronomic Thermal Budgets: Negative temperature trajectories affect chilling requirements and seasonal growing degree-day (GDD) accumulations."
+                )
+        elif var_meta.identifier == "PRECTOTCORR":
+            if rate_dec > 0:
+                actionable_impacts.append(
+                    f"Hydrology & Drainage Infrastructure: An upward trend in precipitation rate ({rate_dec:+.3f} mm/day/decade) elevates stormwater system stress and localized flash-flood risks during convective bursts."
+                )
+                actionable_impacts.append(
+                    f"Water Storage Opportunity: Potential for enhanced surface reservoir replenishment if watershed retention capacity is expanded."
+                )
+            else:
+                actionable_impacts.append(
+                    f"Water Security & Aquifer Depletion: A drying rate of {rate_dec:+.3f} mm/day/decade poses compounding risks to groundwater recharge and seasonal surface reservoir reliability."
+                )
+        elif var_meta.identifier == "WS10M":
+            if rate_dec < 0:
+                actionable_impacts.append(
+                    f"Renewable Wind Generation: Decadal wind stilling ({rate_dec:+.3f} m/s/decade) directly degrades available kinetic wind power density (P ∝ v³), impacting capacity factors for commercial wind turbines."
+                )
+            else:
+                actionable_impacts.append(
+                    f"Renewable Wind & Structural Forcing: Increasing wind speeds elevate coastal wind power yields while increasing structural wind-load design thresholds."
+                )
+        elif var_meta.identifier == "ALLSKY_SFC_SW_DWN":
+            if rate_dec > 0:
+                actionable_impacts.append(
+                    f"Solar Energy Yields: Increased surface downward solar flux ({rate_dec:+.3f} kW-hr/m²/day/decade) elevates photovoltaic energy generation capacity."
+                )
+            else:
+                actionable_impacts.append(
+                    f"Cloud/Aerosol Shielding: Declining downward solar radiation suggests increased aerosol optical depth or cloud cover, marginally lowering PV module generation."
+                )
+
         citation = (
             f"NASA POWER Project ({var_meta.dataset_lineage}), Langley Research Center. "
             f"Gelaro et al. (2017), 'The Modern-Era Retrospective Analysis for Research and Applications, Version 2 (MERRA-2)', "
@@ -123,7 +168,8 @@ class ScientificInsightEngine:
             scientific_synthesis=synthesis,
             confidence_tier=confidence,
             scientific_limitations=limitations,
-            citation=citation
+            citation=citation,
+            actionable_impacts=actionable_impacts
         )
 
     @staticmethod

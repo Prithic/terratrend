@@ -27,17 +27,21 @@ def test_all_seven_variables_exist():
 
 @pytest.mark.unit
 def test_preset_locations_integrity():
-    assert len(PRESET_LOCATIONS) >= 7
+    assert len(PRESET_LOCATIONS) >= 12
     ids = [p.id for p in PRESET_LOCATIONS]
     assert "madurai" in ids
     assert "coimbatore" in ids
     assert "chennai" in ids
+    assert "svalbard_arctic" in ids
+    assert "manaus_amazon" in ids
+    assert "bakersfield_california" in ids
     
     for preset in PRESET_LOCATIONS:
         assert -90.0 <= preset.latitude <= 90.0
         assert -180.0 <= preset.longitude <= 180.0
         assert len(preset.name) > 0
-        assert "Tamil Nadu" in preset.state_or_country
+        assert len(preset.state_or_country) > 0
+        assert preset.category in ["global", "regional"]
 
 @pytest.mark.unit
 def test_regional_presets_span():

@@ -100,13 +100,61 @@ VARIABLES_CATALOG: Dict[str, VariableMetadata] = {
 }
 
 PRESET_LOCATIONS: List[LocationPreset] = [
+    # Global Climate Benchmarks
+    LocationPreset(
+        id="svalbard_arctic",
+        name="Svalbard (Arctic)",
+        state_or_country="Svalbard, Norway (Arctic Zone)",
+        latitude=78.22,
+        longitude=15.63,
+        description="Arctic amplification hotspot displaying extreme multi-decadal warming rates.",
+        category="global"
+    ),
+    LocationPreset(
+        id="manaus_amazon",
+        name="Manaus (Amazon)",
+        state_or_country="Amazonas, Brazil (Tropical Basin)",
+        latitude=-3.12,
+        longitude=-60.02,
+        description="Central Amazon rainforest hydrological nexus monitoring precipitation and heat shifts.",
+        category="global"
+    ),
+    LocationPreset(
+        id="bakersfield_california",
+        name="Bakersfield (California)",
+        state_or_country="California, USA (Central Valley)",
+        latitude=35.37,
+        longitude=-119.02,
+        description="Major Mediterranean agricultural zone monitoring drought intensity and temperature extremes.",
+        category="global"
+    ),
+    LocationPreset(
+        id="lake_chad_sahel",
+        name="Lake Chad (Sahel)",
+        state_or_country="Lake Chad Basin, Chad (Sahel)",
+        latitude=13.00,
+        longitude=14.50,
+        description="Semi-arid ecological transition belt monitoring decadal precipitation recovery vs drought.",
+        category="global"
+    ),
+    LocationPreset(
+        id="athens_mediterranean",
+        name="Athens (Mediterranean)",
+        state_or_country="Attica, Greece (Mediterranean Basin)",
+        latitude=37.98,
+        longitude=23.73,
+        description="European climate vulnerability hotspot monitoring heat dome intensification.",
+        category="global"
+    ),
+    # Regional Case Study (Southern Peninsular India)
     LocationPreset(
         id="coimbatore",
         name="Coimbatore",
         state_or_country="Tamil Nadu, India",
         latitude=11.0168,
         longitude=76.9558,
-        description="Major industrial and textile hub situated near the Western Ghats (Palghat Gap)."
+        description="Major industrial and textile hub situated near the Western Ghats (Palghat Gap).",
+        category="regional"
     ),
     LocationPreset(
         id="chennai",
@@ -114,7 +162,8 @@ PRESET_LOCATIONS: List[LocationPreset] = [
         state_or_country="Tamil Nadu, India",
         latitude=13.0827,
         longitude=80.2707,
-        description="Coastal metropolis on the Coromandel Coast of the Bay of Bengal."
+        description="Coastal metropolis on the Coromandel Coast of the Bay of Bengal.",
+        category="regional"
     ),
     LocationPreset(
         id="madurai",
@@ -122,7 +171,8 @@ PRESET_LOCATIONS: List[LocationPreset] = [
         state_or_country="Tamil Nadu, India",
         latitude=9.9252,
         longitude=78.1198,
-        description="Historic cultural center located in the semi-arid southern plain along the Vaigai River."
+        description="Historic cultural center located in the semi-arid southern plain along the Vaigai River.",
+        category="regional"
     ),
     LocationPreset(
         id="tiruchirappalli",
@@ -130,7 +180,8 @@ PRESET_LOCATIONS: List[LocationPreset] = [
         state_or_country="Tamil Nadu, India",
         latitude=10.7905,
         longitude=78.7047,
-        description="Central inland agricultural and industrial nexus along the Kaveri River delta."
+        description="Central inland agricultural and industrial nexus along the Kaveri River delta.",
+        category="regional"
     ),
     LocationPreset(
         id="salem",
@@ -138,7 +189,8 @@ PRESET_LOCATIONS: List[LocationPreset] = [
         state_or_country="Tamil Nadu, India",
         latitude=11.6643,
         longitude=78.1460,
-        description="North-central region surrounded by the Shevaroy and Nagaramalai hills."
+        description="North-central region surrounded by the Shevaroy and Nagaramalai hills.",
+        category="regional"
     ),
     LocationPreset(
         id="kanyakumari",
@@ -146,7 +198,8 @@ PRESET_LOCATIONS: List[LocationPreset] = [
         state_or_country="Tamil Nadu, India",
         latitude=8.0883,
         longitude=77.5385,
-        description="Southernmost tip of mainland India, convergence of Arabian Sea, Indian Ocean, and Bay of Bengal."
+        description="Southernmost tip of mainland India, convergence of Arabian Sea, Indian Ocean, and Bay of Bengal.",
+        category="regional"
     ),
     LocationPreset(
         id="ooty_nilgiris",
@@ -154,7 +207,8 @@ PRESET_LOCATIONS: List[LocationPreset] = [
         state_or_country="Tamil Nadu, India",
         latitude=11.4102,
         longitude=76.6950,
-        description="High-altitude Western Ghats montane ecosystem (2,240 m elevation)."
+        description="High-altitude Western Ghats montane ecosystem (2,240 m elevation).",
+        category="regional"
     )
 ]
 

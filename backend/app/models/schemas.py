@@ -24,6 +24,7 @@ class LocationPreset(BaseModel):
     latitude: float
     longitude: float
     description: str
+    category: Optional[str] = "regional"
 
 class TimeSeriesPoint(BaseModel):
     date: str
@@ -88,6 +89,10 @@ class ScientificExplanation(BaseModel):
     confidence_tier: str  # "High Confidence", "Moderate Confidence", "Inconclusive / Low Signal"
     scientific_limitations: List[str]
     citation: str
+    actionable_impacts: Optional[List[str]] = Field(
+        default_factory=list,
+        description="Translates scientific statistics into practical real-world sector impacts (agriculture, water management, energy, public health)"
+    )
 
 class PointTrendRequest(BaseModel):
     variable: str = Field(default="T2M", description="Variable identifier, e.g., T2M")

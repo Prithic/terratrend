@@ -222,6 +222,32 @@ export const EssentialQuestionsCards: React.FC<EssentialQuestionsCardsProps> = (
         </p>
       </div>
 
+      {/* Actionable Sector & Decision-Maker Impacts */}
+      {explanation.actionable_impacts && explanation.actionable_impacts.length > 0 && (
+        <div className={`border rounded-xl p-4 text-xs space-y-2.5 ${
+          isEditorial ? "bg-[#f0fdf4] border-emerald-300 text-stone-800" : "bg-emerald-950/30 border-emerald-800/50 text-emerald-100"
+        }`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 font-bold text-emerald-800 dark:text-emerald-300">
+              <span className="text-[11px] uppercase tracking-wider font-mono">Real-World Operational & Sector Impacts:</span>
+            </div>
+            <span className={`text-[10px] px-2 py-0.5 rounded font-mono uppercase ${
+              isEditorial ? "bg-emerald-100 text-emerald-900 border border-emerald-300" : "bg-emerald-900/60 text-emerald-300 border border-emerald-700/50"
+            }`}>
+              Policy & Adaptation
+            </span>
+          </div>
+          <ul className="space-y-1.5 pl-1">
+            {explanation.actionable_impacts.map((impact, idx) => (
+              <li key={idx} className="flex items-start gap-2">
+                <span className="text-emerald-600 font-bold shrink-0 mt-0.5">•</span>
+                <span className={`leading-relaxed ${isEditorial ? "text-stone-800" : "text-slate-200"}`}>{impact}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* Expandable Limitations & Citation */}
       <div className={`border-t pt-3 ${isEditorial ? "border-[#eceae5]" : "border-obs-borderSubtle"}`}>
         <button
