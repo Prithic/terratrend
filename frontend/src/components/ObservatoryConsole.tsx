@@ -290,41 +290,94 @@ export const ObservatoryConsole: React.FC<ObservatoryConsoleProps> = ({
               {mode === "point" ? (isExplore ? "Location Target" : "Geographic Station") : "Regional Domain"}
             </span>
             <span className={`text-[10px] font-mono ${isEditorial ? "text-stone-500" : "text-slate-400"}`}>
-              {mode === "point" ? "Tamil Nadu Focus" : "66 MERRA-2 Cells"}
+              {mode === "point" ? "Global & Regional Focus" : "66 MERRA-2 Cells"}
             </span>
           </div>
 
           {mode === "point" ? (
-            <div className="space-y-2">
-              {/* Preset Chips */}
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-1" role="radiogroup" aria-label="Station Presets">
-                {presets.map((preset) => {
-                  const isSelected = selectedPresetId === preset.id;
-                  return (
-                    <button
-                      key={preset.id}
-                      type="button"
-                      role="radio"
-                      aria-checked={isSelected}
-                      onClick={() => onSelectPreset(preset)}
-                      disabled={isLoading}
-                      className={`min-h-[38px] p-1.5 rounded-md border text-left transition-all ${
-                        isSelected
-                          ? isEditorial
-                            ? "bg-white border-indigo-600 text-stone-900 shadow-sm ring-1 ring-indigo-600/30"
-                            : "bg-indigo-950/70 border-indigo-500 text-white shadow-sm ring-1 ring-indigo-500/40"
-                          : isEditorial
-                            ? "bg-white/80 border-[#e6e4df] text-stone-700 hover:border-stone-400 hover:text-stone-900"
-                            : "bg-obs-canvas/80 border-obs-borderSubtle text-slate-300 hover:border-slate-700 hover:text-white"
-                      } ${isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                    >
-                      <div className="text-[11px] font-semibold truncate">{preset.name}</div>
-                      <div className={`text-[9px] font-mono ${isEditorial ? "text-stone-400" : "text-slate-400"}`}>
-                        {preset.latitude.toFixed(2)}°, {preset.longitude.toFixed(2)}°
-                      </div>
-                    </button>
-                  );
-                })}
+            <div className="space-y-2.5">
+              {/* Planetary Benchmarks */}
+              {presets.some((p) => p.category === "global") && (
+                <div>
+                  <div className={`text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center justify-between ${
+                    isEditorial ? "text-cyan-800" : "text-cyan-400"
+                  }`}>
+                    <span>Planetary Climate Benchmarks</span>
+                    <span className="text-[9px] font-normal opacity-80">Arctic, Amazon, USA, Sahel, Med</span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-1" role="radiogroup" aria-label="Global Presets">
+                    {presets
+                      .filter((p) => p.category === "global")
+                      .map((preset) => {
+                        const isSelected = selectedPresetId === preset.id;
+                        return (
+                          <button
+                            key={preset.id}
+                            type="button"
+                            role="radio"
+                            aria-checked={isSelected}
+                            onClick={() => onSelectPreset(preset)}
+                            disabled={isLoading}
+                            className={`min-h-[36px] p-1.5 rounded-md border text-left transition-all ${
+                              isSelected
+                                ? isEditorial
+                                  ? "bg-white border-cyan-600 text-stone-900 shadow-sm ring-1 ring-cyan-600/30"
+                                  : "bg-cyan-950/70 border-cyan-500 text-white shadow-sm ring-1 ring-cyan-500/40"
+                                : isEditorial
+                                  ? "bg-white/80 border-[#e6e4df] text-stone-700 hover:border-stone-400 hover:text-stone-900"
+                                  : "bg-obs-canvas/80 border-obs-borderSubtle text-slate-300 hover:border-slate-700 hover:text-white"
+                            } ${isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                          >
+                            <div className="text-[10.5px] font-semibold truncate">{preset.name}</div>
+                            <div className={`text-[9px] font-mono ${isEditorial ? "text-stone-400" : "text-slate-400"}`}>
+                              {preset.latitude.toFixed(1)}°, {preset.longitude.toFixed(1)}°
+                            </div>
+                          </button>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
+
+              {/* Regional Study Network */}
+              <div>
+                <div className={`text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center justify-between ${
+                  isEditorial ? "text-indigo-900" : "text-indigo-400"
+                }`}>
+                  <span>South India Regional Network</span>
+                  <span className="text-[9px] font-normal opacity-80">7 Verified Stations</span>
+                </div>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-1" role="radiogroup" aria-label="Station Presets">
+                  {presets
+                    .filter((p) => p.category !== "global")
+                    .map((preset) => {
+                      const isSelected = selectedPresetId === preset.id;
+                      return (
+                        <button
+                          key={preset.id}
+                          type="button"
+                          role="radio"
+                          aria-checked={isSelected}
+                          onClick={() => onSelectPreset(preset)}
+                          disabled={isLoading}
+                          className={`min-h-[36px] p-1.5 rounded-md border text-left transition-all ${
+                            isSelected
+                              ? isEditorial
+                                ? "bg-white border-indigo-600 text-stone-900 shadow-sm ring-1 ring-indigo-600/30"
+                                : "bg-indigo-950/70 border-indigo-500 text-white shadow-sm ring-1 ring-indigo-500/40"
+                              : isEditorial
+                                ? "bg-white/80 border-[#e6e4df] text-stone-700 hover:border-stone-400 hover:text-stone-900"
+                                : "bg-obs-canvas/80 border-obs-borderSubtle text-slate-300 hover:border-slate-700 hover:text-white"
+                          } ${isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                        >
+                          <div className="text-[10.5px] font-semibold truncate">{preset.name}</div>
+                          <div className={`text-[9px] font-mono ${isEditorial ? "text-stone-400" : "text-slate-400"}`}>
+                            {preset.latitude.toFixed(1)}°, {preset.longitude.toFixed(1)}°
+                          </div>
+                        </button>
+                      );
+                    })}
+                </div>
               </div>
 
               {/* Coordinates Override */}
