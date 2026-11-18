@@ -1,5 +1,6 @@
 # TERRATREND | NASA Earth System Trend Discovery & Intelligence Platform
 
+[![Live Demo](https://img.shields.io/badge/Live%20Platform-terratrend--zeta.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://terratrend-zeta.vercel.app/)
 [![NASA Space Apps 2026](https://img.shields.io/badge/NASA%20Space%20Apps-2026%20Challenge-0B3D91.svg)](https://www.spaceappschallenge.org/2026/challenges/be-an-earth-system-trend-detective/)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI%20%7C%20SciPy%20%7C%20Pandas-009688.svg)](https://fastapi.tiangolo.com)
 [![Next.js](https://img.shields.io/badge/Frontend-Next.js%2014%20%7C%20TypeScript%20%7C%20Tailwind-black.svg)](https://nextjs.org)
@@ -10,6 +11,7 @@
 
 > **Official NASA International Space Apps Challenge 2026 Submission**<br>
 > **Challenge:** [Be an Earth System Trend Detective](https://www.spaceappschallenge.org/2026/challenges/be-an-earth-system-trend-detective/)<br>
+> **Live Operational Platform:** [https://terratrend-zeta.vercel.app/](https://terratrend-zeta.vercel.app/)<br>
 > **Team:** CODEVERSE &nbsp;|&nbsp; **Primary Target Award:** Best Use of Science / Best Use of Data<br>
 > **Repository:** [https://github.com/Prithic/terratrend](https://github.com/Prithic/terratrend)
 
@@ -322,6 +324,7 @@ In accordance with open scientific ethics, TerraTrend discloses the following ph
 
 * **Challenge:** [Be an Earth System Trend Detective](https://www.spaceappschallenge.org/2026/challenges/be-an-earth-system-trend-detective/)
 * **Project Title:** TerraTrend
+* **Live Interactive Platform:** [https://terratrend-zeta.vercel.app/](https://terratrend-zeta.vercel.app/)
 * **Team:** CODEVERSE
 * **Repository:** [https://github.com/Prithic/terratrend](https://github.com/Prithic/terratrend)
 * **Primary NASA Data Sources:**
